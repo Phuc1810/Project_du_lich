@@ -3,11 +3,11 @@
 
     <?php  
       // LẤY THÔNG TIN CÔNG TY
-      $sql_cty = "SELECT * FROM CongTy LIMIT 1";
+      $sql_cty = "SELECT * FROM congty LIMIT 1";
       $cty = $conn->query($sql_cty)->fetch_assoc();
 
       // LẤY DANH SÁCH CHI NHÁNH
-      $sql_cn = "SELECT * FROM ChiNhanh WHERE MaCTY = " . $cty['MaCTY'];
+      $sql_cn = "SELECT * FROM chinhanh WHERE MaCTY = " . $cty['MaCTY'];
       $chinhanh = $conn->query($sql_cn);
     ?>
 
