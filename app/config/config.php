@@ -34,7 +34,6 @@ define('VIETQR_TEMPLATE', 'compact');
 define('VIETQR_ACCOUNT_NAME', 'TRAN HOAI PHUC');
 // define('SEPAY_WEBHOOK_TOKEN', 'chuoi_token_ban_dat_tren_sepay');
 define('SEPAY_WEBHOOK_TOKEN', '');
-
-
+$conn->query("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 ?>
 
