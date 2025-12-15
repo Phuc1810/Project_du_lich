@@ -8,7 +8,7 @@
 
   // Lấy thông tin công ty
   $cty = ['SoDienThoai' => '', 'Logo_1' => ''];
-  $rs = $conn->query("SELECT SoDienThoai, Logo_1 FROM CongTy LIMIT 1");
+  $rs = $conn->query("SELECT SoDienThoai, Logo_1 FROM congty LIMIT 1");
   if ($rs) {
     $row = $rs->fetch_assoc();
     if ($row) $cty = $row;
