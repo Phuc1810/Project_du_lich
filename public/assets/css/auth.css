@@ -1,0 +1,190 @@
+:root { --r: 22px; }
+
+body{
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(13,110,253,.18), transparent 60%),
+    radial-gradient(1000px 500px at 90% 0%, rgba(25,135,84,.14), transparent 55%),
+    #f6f7fb;
+}
+
+.auth-shell{
+  min-height: 100vh;
+  padding-top: 150px; /* tăng để tránh header fixed */
+  padding-bottom: 70px;
+}
+
+.auth-card{
+  border: 0;
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: 0 22px 60px rgba(0,0,0,.14);
+  background: #fff;
+}
+
+/* LEFT PANEL */
+.auth-left{
+  background: linear-gradient(135deg, #0d6efd 0%, #3b82f6 55%, #60a5fa 100%);
+  color:#fff;
+  padding: 34px 28px;
+  position: relative;
+  height: 100%;
+}
+.auth-left:before{
+  content:"";
+  position:absolute;
+  inset:-80px -120px auto auto;
+  width: 260px;
+  height: 260px;
+  background: rgba(255,255,255,.12);
+  border-radius: 50%;
+}
+.auth-left:after{
+  content:"";
+  position:absolute;
+  inset:auto auto -120px -120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(255,255,255,.10);
+  border-radius: 50%;
+}
+.auth-left .brand{
+  font-weight: 900;
+  letter-spacing: .2px;
+  font-size: 22px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.auth-left .slogan{
+  margin-top: 10px;
+  opacity: .92;
+  line-height: 1.5;
+}
+.auth-left .bullet{
+  margin-top: 18px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.auth-left .bullet i{
+  margin-top: 3px;
+  background: rgba(255,255,255,.2);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 13px;
+}
+
+/* RIGHT PANEL */
+.auth-right{
+  padding: 28px 28px 24px;
+}
+
+/* Tabs kiểu segmented */
+.seg-tabs{
+  display: flex;
+  width: 100%;
+  background: #f1f5ff;
+  padding: 6px;
+  border-radius: 999px;
+  gap: 6px;
+}
+.seg-tabs .nav-item{
+  flex: 1;
+}
+.seg-tabs .nav-link{
+  width: 100%;
+  display: block;
+  text-align: center;
+  border-radius: 999px;
+  font-weight: 800;
+  padding: 10px 16px;
+  color: #0b2a5b;
+}
+.seg-tabs .nav-link.active{
+  background: #0d6efd;
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(13,110,253,.25);
+  position: relative;
+  z-index: 2;
+}
+
+label.form-label{ font-weight: 700; margin-bottom: 6px; }
+
+.form-control, .form-select{
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+/* Password input group bo góc đồng bộ */
+.input-group .form-control{
+  border-top-left-radius: 14px !important;
+  border-bottom-left-radius: 14px !important;
+}
+.input-group .btn-pass{
+  border-top-right-radius: 14px !important;
+  border-bottom-right-radius: 14px !important;
+  border-left: 0;
+  background: #fff;
+  padding: 0 14px;
+}
+.input-group .btn-pass:hover{ background: #f8fafc; }
+
+.btn-pill{
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: .3px;
+  padding: 11px 16px;
+}
+
+.divider{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  color: #64748b;
+  font-size: 13px;
+  margin: 18px 0;
+}
+.divider:before,.divider:after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#e5e7eb;
+}
+
+.hint{ font-size: 13px; color: #64748b; }
+.field-error{ font-size: 13px; color: #dc3545; margin-top: 6px; }
+
+.google-wrap{
+  display: flex;
+  justify-content: center;
+}
+
+.auth-success{
+  padding: 18px 8px;
+}
+
+.auth-success-icon{
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(25,135,84,.12);
+  color: #198754;
+  font-size: 30px;
+}
+
+@media (max-width: 768px){
+  .auth-shell{ padding-top: 140px; }
+  .auth-right{ padding: 22px 18px; }
+}
+
+@media (max-width: 576px){
+  /* mobile: giảm width để không tràn */
+  .g_id_signin{ transform: scale(0.95); transform-origin: center; }
+}

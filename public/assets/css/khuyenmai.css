@@ -1,0 +1,108 @@
+.km-wrapper {
+  padding-top: 150px;
+  padding-bottom: 80px;
+}
+
+.km-title {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* CARD CTKM – giống card tin tức */
+.km-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%;              /* auto theo nội dung, nhưng vẫn fill col */
+  transition: 0.25s;
+}
+
+.km-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+/* ẢNH – giống blog-card: cao cố định, rộng 100% */
+.km-img-box {
+  width: 100%;
+  height: 320px;             /* bạn thích to hơn thì tăng lên 360/380 */
+  position: relative;
+  overflow: hidden;
+}
+
+.km-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.3s;
+}
+
+.km-card:hover .km-img {
+  transform: scale(1.05);
+}
+
+/* Badge % */
+.km-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ff6b00;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+/* BODY */
+.km-body {
+  padding: 16px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;         /* cho nội dung nhìn cân */
+}
+
+.km-name {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.km-time {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.km-desc {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+
+  /* Giới hạn số dòng mô tả cho gọn, giống tin tức */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Nút xem tour – full chiều ngang, dính đáy */
+.btn-km-view {
+  border-radius: 999px;
+  background: #005bbb;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  padding: 10px 18px;
+  transition: 0.25s;
+}
+
+.btn-km-view:hover {
+  background: #ff6b00;
+  color: #fff;
+}

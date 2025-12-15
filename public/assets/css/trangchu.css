@@ -1,0 +1,798 @@
+/* THANH TOPBAR */
+.topbar {
+  height: 38px;
+  background: rgba(0, 0, 0, 0.03);
+  z-index: 9999 !important;
+  padding-left: 150px;
+}
+
+/* Ô TÌM KIẾM */
+.searchbox {
+  width: 180px;
+  border-radius: 50px;
+  padding: 4px 12px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+  transition: 0.25s ease;
+}
+
+/* Hover — sáng nhẹ + nhô lên */
+.topbar .searchbox:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.55);
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+/* Focus */
+.searchbox:focus {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
+}
+
+
+/* NÚT LIÊN HỆ */
+.btn.btn-primary {
+  background-color: #005bbb;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  padding: 6px 18px;
+  transition: 0.25s ease;
+}
+
+/* Hover — sáng nhẹ + nhô lên (không đổi màu nền) */
+.topbar .btn.btn-primary:hover {
+  background-color: #005bbb; /* giữ nguyên */
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(0, 91, 187, 0.55);
+}
+
+
+/* ===== THANH DIEU HUONG ===== */
+.thanh_dieu_huong {
+  top: 38px;
+  background: rgba(207, 204, 204, 0.25);
+  height: 85px;
+  padding: 10px 0;
+}
+
+/* Logo PNG */
+.logo_img {
+  height: 140px;  /* chỉnh kích thước logo */
+  object-fit: contain;        /* giữ tỉ lệ */
+  filter: brightness(1.2);   /* tăng độ sáng logo trắng */
+  margin-right: 60px;
+}
+
+/* CĂN MENU CÁCH ĐỀU */
+.navbar-nav {
+  gap: 18px;
+  align-items: center;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 600;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffffff !important;
+  white-space: nowrap; 
+  padding: 8px 12px;
+  
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+}
+
+/* ĐĂNG NHẬP / ĐĂNG KÝ – nhẹ hơn, không bị thô */
+.navbar-nav .nav-item.login-item {
+  margin-left: 70px;           /* tạo khoảng cách với LIÊN HỆ */
+}
+
+/* Style riêng cho nút ĐĂNG NHẬP */
+.navbar-nav .nav-link.login-link {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  padding: 6px 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Ghi đè hover: không đổi nền, giữ y nguyên */
+.navbar-nav .nav-link.login-link:hover {
+  color: #ffffff;
+}
+
+/* =======================================
+    DROPDOWN MENU – DU LỊCH STYLE
+======================================= */
+
+/* Hiển thị khi hover */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* OFF trạng thái ban đầu */
+.dropdown-menu {
+    display: block;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+
+    background: rgba(255,255,255,0.97);
+    border-radius: 12px;
+    padding: 8px 0;
+    border: 1px solid rgba(255,255,255,0.25);
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+
+    transition: all 0.25s ease;
+    min-width: 230px;  /* MENU GỌN CHUẨN */
+}
+
+/* ITEM TRONG MENU */
+.dropdown-item {
+    padding: 10px 18px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #e9e9e9;
+}
+
+/* Item cuối không có border */
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Hover đẹp */
+.dropdown-item:hover {
+    background: #f0f0f0;
+    padding-left: 22px;
+    transition: 0.2s;
+}
+
+/* =======================================
+    BANNER
+======================================= */
+.lop_mo {
+    background: rgba(0,0,0,0.35);
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.noi_dung_banner {
+    position: absolute;
+    top: 50%;
+    left: 8%;
+    transform: translateY(-50%);
+}
+
+.carousel-item {
+    transition: transform 1s ease-in-out;
+}
+
+
+/* ===== THANH MANG XA HOI ===== */
+.thanh_mxh {
+position: fixed;
+top: 40%;
+right: 20px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+z-index: 999;
+}
+
+
+.nut_mxh {
+width: 45px;
+height: 45px;
+border-radius: 50%;
+background: white;
+color: #005bbb;
+display: flex;
+justify-content: center;
+align-items: center;
+box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+transition: transform 0.25s ease;
+}
+
+
+.nut_mxh:hover {
+transform: translateY(-6px);
+}
+
+/* =============================================
+   FIX LỖI NÚT CAROUSEL (QUAN TRỌNG)
+============================================= */
+/* Thu nhỏ vùng nút bấm lại để không đè lên Card */
+#tourSlider .carousel-control-prev,
+#tourSlider .carousel-control-next {
+  width: 45px;       /* Chỉ rộng 45px thay vì 15% màn hình */
+  height: 45px;      /* Hình vuông */
+  top: 50%;          /* Căn giữa dọc */
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.8); /* Nền trắng mờ */
+  border-radius: 50%; /* Bo tròn */
+  opacity: 1;         /* Luôn hiện rõ */
+  z-index: 10;        /* Nằm trên cùng */
+  transition: 0.3s;
+}
+
+/* Đẩy nút lùi ra mép một chút */
+#tourSlider .carousel-control-prev { left: -10px; }
+#tourSlider .carousel-control-next { right: -10px; }
+
+/* Đổi màu icon mũi tên sang đen */
+#tourSlider .carousel-control-prev-icon,
+#tourSlider .carousel-control-next-icon {
+  filter: invert(100%); /* Đảo màu trắng thành đen */
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+#tourSlider .carousel-control-prev:hover,
+#tourSlider .carousel-control-next:hover {
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* =======================================
+    Thanh tìm kiếm nâng cao
+======================================= */
+/* Tổng khung */
+.advanced-search .search-box {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  align-items: end;
+  border: 1px solid #ececec;
+}
+
+/* Item */
+.search-item label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+  color: #333;
+}
+
+.search-item select,
+.search-item input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  outline: none;
+  transition: 0.25s;
+}
+
+/* Hover + focus */
+.search-item select:hover,
+.search-item input:hover {
+  border-color: #005bbb;
+}
+
+.search-item select:focus,
+.search-item input:focus {
+  box-shadow: 0 0 6px rgba(0,91,187,0.4);
+  border-color: #005bbb;
+}
+
+/* Nút tìm kiếm */
+.search-btn-box button {
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 50px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  background: #005bbb;
+  color: white;
+  transition: 0.25s;
+}
+
+.search-btn-box button:disabled {
+  background: #9bbcd7;
+  cursor: not-allowed;
+}
+
+.search-btn-box button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #ff6b00;
+}
+
+/* ---------- Ô địa điểm có autocomplete ---------- */
+.search-item {
+  position: relative; /* để box gợi ý bám theo */
+}
+
+/* Hộp gợi ý địa điểm */
+.suggest-location-box {
+  position: absolute;
+  top: 100%;             /* ngay dưới input */
+  left: 0;
+  width: 100%;
+  margin-top: 4px;
+
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  z-index: 999;
+
+  max-height: 180px;     /* ~4 dòng, tuỳ chiều cao font của bạn */
+  overflow-y: auto;      /* nhiều hơn thì cuộn */
+}
+
+/* Mỗi dòng gợi ý */
+.suggest-location-box .suggest-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.suggest-location-box .suggest-item:hover {
+  background: #f3f3f3;
+}
+
+/* Ẩn hiện bằng class */
+.d-none {
+  display: none !important;
+}
+
+
+
+/* =======================================
+    Card tour nổi bật
+======================================= */
+
+.tour-card {
+  border-radius: 16px; /* Bo góc mềm mại hơn */
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: none;
+  cursor: pointer;
+}
+
+/* ẢNH */
+.tour-img {
+  position: relative;
+  height: 450px; /* Chiều cao cố định */
+}
+
+.tour-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* Hiệu ứng zoom ảnh nhẹ khi hover */
+.tour-card:hover .tour-img img {
+  transform: scale(1.1);
+}
+
+/* LỚP PHỦ ĐEN (GRADIENT) - Để chữ trắng đọc được trên mọi ảnh */
+.tour-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%; /* Phủ đen 60% phía dưới */
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Dồn nội dung xuống đáy */
+  align-items: center;
+  padding-bottom: 30px;
+  z-index: 2;
+  transition: 0.3s;
+}
+
+/* TIÊU ĐỀ TOUR */
+.tour-title {
+  font-family: 'Montserrat', sans-serif; /* Font đậm đà */
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8a404; /* Màu vàng cam */
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+/* SỐ NGÀY */
+.tour-day {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+/* GIÁ TIỀN */
+.tour-price {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+/* NÚT ĐẶT NGAY - Styled giống hình tròn Pill */
+.datngay-btn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 6px 25px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+/* Hover vào nút */
+.datngay-btn:hover {
+  background: #FF9933;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+
+/* =======================================
+    Card khuyến mãi
+======================================= */
+.km-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: .3s;
+}
+
+.km-card:hover {
+  transform: translateY(-6px);
+}
+
+.km-img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  transition: .35s ease;
+}
+
+.km-card:hover .km-img {
+  transform: scale(1.08);
+  filter: brightness(0.8);
+}
+
+/* OVERLAY chữ */
+.km-overlay {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+/* Tag giảm giá */
+.km-discount {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 60px;
+  height: 60px;
+  background: #ff3c00;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  border: 3px solid white; /* viền trắng nhìn sang hơn */
+  z-index: 10;
+}
+
+/* Tên tour */
+.km-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #f8a404;
+}
+
+/* Giá cũ */
+.km-old {
+  text-decoration: line-through;
+  font-size: 18px;
+  margin: 0;
+  color: #ddd;
+}
+
+/* Giá mới */
+.km-new {
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+/* Nút */
+.km-btn {
+  background: #fff;
+  padding: 7px 22px;
+  border-radius: 30px;
+  font-weight: 700;
+  color: #000;
+  transition: .25s;
+}
+
+.km-btn:hover {
+  background: #ff5722;
+  color: white;
+}
+
+/* =======================================
+                  Blog
+======================================= */
+/* =========================================================
+                BLOG HERO LARGE CARD (2 CARD ĐẦU)
+========================================================= */
+.blog-hero-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: .35s ease;
+  height: 380px;                      /* 2 card MẶC ĐỊNH BẰNG NHAU */
+  display: flex;
+}
+
+.blog-hero-img {
+  width: 100%;
+  height: 100%;                       /* Ảnh luôn đổ FULL */
+  object-fit: cover;
+  transition: .4s ease;
+}
+
+.blog-hero-card:hover .blog-hero-img {
+  transform: scale(1.06);
+  filter: brightness(0.9);
+}
+
+.blog-hero-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 26px 28px 26px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05));
+  height: 55%;                         /* Overlay FIX chiều cao CHO CẢ HAI CARD */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;             /* Chữ CĂN GIỮA */
+}
+
+/* =================== TEXT =================== */
+.blog-hero-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.blog-hero-desc {
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+
+.blog-hero-btn {
+  background: #fff;
+  color: #000;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: .25s;
+  width: fit-content;
+  text-decoration: none !important;
+}
+
+.blog-hero-btn:hover {
+  background: #f8a404;
+  color: #fff;
+}
+
+
+
+/* =========================================================
+                  BLOG MINI CARD (SLIDER)
+========================================================= */
+.blog-mini-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: .3s ease;
+  height: 360px;                       /* TĂNG CHIỀU CAO THÊM 1 CHÚT */
+  border: 1px solid #eee;
+}
+
+.blog-mini-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+}
+
+.blog-mini-img-box {
+  width: 100%;
+  height: 180px;                        /* GIẢM CHIỀU CAO ẢNH */
+  overflow: hidden;
+}
+
+.blog-mini-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: .45s ease;
+}
+
+.blog-mini-card:hover .blog-mini-img {
+  transform: scale(1.1);
+}
+
+.blog-mini-body {
+  padding: 18px 15px 25px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;                          /* Đảm bảo nút luôn nằm dưới */
+}
+
+/* TITLE */
+.blog-mini-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #333;
+  text-transform: uppercase;
+}
+
+/* DESCRIPTION */
+.blog-mini-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 18px;
+  line-height: 1.45;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* BUTTON */
+.btn-xemthem {
+  margin-top: auto;
+  padding: 8px 28px;
+  border: 1px solid #333;
+  border-radius: 40px;
+  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: .3s;
+  text-decoration: none !important;
+}
+
+.btn-xemthem:hover {
+  background: #f8a404;
+  color: #fff;
+}
+
+#blogSlider .carousel-control-prev,
+#blogSlider .carousel-control-next {
+  width: 6%;
+}
+
+#blogSlider .carousel-control-prev-icon,
+#blogSlider .carousel-control-next-icon {
+  filter: invert(100%);
+}
+
+/*  FOOTER */
+/* Logo lớn và cân đối */
+/* ====== LOGO ====== */
+.footer-logo {
+  height: 90px;         /* kích thước lý tưởng */
+  max-width: 220px;
+  width: auto;
+  display: block;
+  margin: 0 auto 12px auto;  /* căn giữa + khoảng cách */
+  object-fit: contain;
+  transform: scale(2.35);
+}
+
+/* ====== TÊN CÔNG TY ====== */
+.footer-company-name {
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  color: #333;
+}
+
+/* ====== ICON MẠNG XÃ HỘI ====== */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.social-btn {
+  width: 45px;
+  height: 45px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #333;
+  background: #fff;
+  transition: .3s;
+}
+
+.social-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* FOOTER TITLE */
+.footer-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* FOOTER LINKS */
+.footer-links li a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+  padding: 3px 0;
+  transition: .25s;
+}
+
+.footer-links li a:hover {
+  color: #007bff;
+  padding-left: 4px;
+}
+
+.phone-hotline{
+  color: #000;
+}
+
+/* Riêng trang chủ (body.page-home) => trắng */
+.page-home .phone-hotline{
+  color: #fff !important;
+}

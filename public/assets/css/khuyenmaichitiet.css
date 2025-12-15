@@ -1,0 +1,185 @@
+/* Khoảng cách giống các trang khác */
+.kmct-wrapper {
+  padding-top: 150px;
+  padding-bottom: 80px;
+}
+
+/* ===== HERO CTKM ===== */
+.kmct-hero { margin-bottom: 10px; }
+
+.kmct-hero-imgbox {
+  width: 100%;
+  height: 380px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.kmct-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.35s;
+}
+
+.kmct-hero-imgbox:hover .kmct-hero-img { transform: scale(1.05); }
+
+.kmct-hero-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: #ff6b00;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* THÔNG TIN CTKM */
+.kmct-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.kmct-time {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.kmct-desc {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ===== SECTION TOUR ÁP DỤNG ===== */
+.kmct-tour-title {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== CARD TOUR ÁP DỤNG (giống mẫu bạn gửi) ===== */
+.kmct-tour-card2{
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  transition: .25s;
+}
+
+.kmct-tour-card2:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.14);
+}
+
+.kmct-tour-imgbox2{
+  position:relative;
+  width:100%;
+  height: 240px; /* đúng vibe hình bạn gửi */
+  overflow:hidden;
+}
+
+.kmct-tour-img2{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:.35s ease;
+}
+
+.kmct-tour-card2:hover .kmct-tour-img2{
+  transform:scale(1.06);
+}
+
+/* Badge tròn cam */
+.kmct-tour-badge2{
+  position:absolute;
+  top:14px;
+  left:14px;
+  width:74px;
+  height:74px;
+  border-radius:50%;
+  background:#ff6b00;
+  color:#fff;
+  font-weight:800;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border: 4px solid #fff; /* viền trắng */
+  box-shadow: 0 10px 18px rgba(0,0,0,0.20);
+}
+
+.kmct-tour-body2{
+  padding: 16px 18px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.kmct-tour-title2{
+  font-size:18px;
+  font-weight:700;
+  line-height: 1.25;
+  margin:0;
+  color:#222;
+}
+
+.kmct-tour-place2{
+  font-size: 13px;      /* giảm nhẹ */
+  font-weight: 500;     /* bớt dày */
+  color:#6b7280;        /* xám nhẹ */
+  margin:0;
+}
+
+.kmct-tour-price2{
+  margin:0;
+  display:flex;
+  gap:12px;
+  align-items:baseline;
+}
+
+.kmct-price-new2{
+  color:#e53935;
+  font-weight:700;
+  font-size:16px;
+}
+
+.kmct-price-old2{
+  color:#8b8b8b;
+  text-decoration:line-through;
+  font-weight:600;
+  font-size:14px;
+}
+
+/* Nút viền đen bo tròn */
+.kmct-btn-outline2{
+  margin-top: 10px;
+  width:100%;
+  text-align:center;
+  padding: 12px 16px;
+  border-radius:999px;
+  border: 2px solid #111;
+  background:#fff;
+  color:#111;
+  font-weight:700;
+  letter-spacing:.2px;
+  text-decoration:none;
+  transition:.25s;
+  font-size: 14px;
+}
+
+.kmct-btn-outline2:hover{
+  background:#ff6b00;
+  border-color:#ff6b00;
+  color:#fff;
+}

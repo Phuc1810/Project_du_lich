@@ -1,0 +1,95 @@
+/* Khoảng cách giống các trang khác (do header fixed) */
+.blog-list-wrapper {
+  padding-top: 150px;
+  padding-bottom: 80px;
+}
+
+/* Tiêu đề */
+.blog-list-title {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Card tin tức */
+.blog-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: 0.25s;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.blog-card-img-box {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.blog-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.3s;
+}
+
+.blog-card:hover .blog-card-img {
+  transform: scale(1.05);
+}
+
+.blog-card-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1; 
+}
+
+.blog-card-title {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 8px;
+  min-height: 48px;  /* cho đều hàng */
+}
+
+.blog-card-date {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 8px;
+}
+
+.blog-card-desc {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+/* Nút xem chi tiết */
+.blog-card-btn {
+  display: block;
+  width: 100%;
+  margin-top: auto;       /* đẩy nút xuống đáy body */
+  padding: 10px 0;
+  border-radius: 999px;
+  background: #005bbb;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  transition: 0.25s;
+}
+
+.blog-card-btn:hover {
+  background: #ff6b00;
+  color: #fff;
+  transform: translateY(-1px);
+}

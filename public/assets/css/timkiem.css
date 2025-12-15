@@ -1,0 +1,82 @@
+/* KHOẢNG CÁCH CHO TRANG TÌM KIẾM */
+.search-result-wrapper {
+  padding-top: 150px;   /* đẩy nội dung xuống khỏi header cố định */
+  padding-bottom: 70px; /* cách footer 1 đoạn cho thoáng */
+}
+
+/* Tiêu đề kết quả cho nổi hơn một chút */
+.search-result-wrapper h2 {
+  margin-bottom: 40px;
+}
+
+.tour-card {
+  position: relative;           /* để đặt badge absolute */
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  transition: 0.25s;
+}
+
+.tour-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.tour-img {
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+}
+
+.tour-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.tour-card:hover .tour-img img {
+  transform: scale(1.05);
+}
+
+/* BADGE % GIẢM GIÁ */
+.tour-discount-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #ff6a00;
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  border: 4px solid #fff;
+
+  z-index: 10;           /* GIỮ BADGE LUÔN NẰM TRÊN ẢNH */
+  pointer-events: none;
+}
+
+/* NÚT ĐẶT TOUR – trắng, hover cam */
+.btn-book {
+  background: #ffffff;
+  border-radius: 999px;
+  border: 2px solid #141313;
+  color: #141313;
+  font-weight: 700;
+  padding: 10px 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: 0.25s ease;
+}
+
+.btn-book:hover {
+  background: #ff6a00;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255,106,0,0.45);
+}

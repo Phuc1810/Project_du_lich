@@ -1,0 +1,84 @@
+#article-wrapper {
+  margin-top: 150px !important;    /* đẩy nội dung xuống dưới header */
+  margin-bottom: 80px;  /* cách footer 1 đoạn cho thoáng */
+  max-width: 900px;
+}
+
+/* Tiêu đề bài viết */
+.article-title {
+  font-weight: 700;
+  font-size: 28px;
+ margin: 0 0 8px 0;
+}
+
+/* Meta: ngày + loại */
+.article-meta {
+  /* color: #777; */
+  font-size: 14px;
+  /* margin-bottom: 15px; */
+  color: #666;
+}
+
+.article-intro {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+/* Nội dung chính */
+.article-content {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ===== BÀI VIẾT LIÊN QUAN ===== */
+
+.related-item {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 14px;
+  padding: 8px;
+  transition: 0.25s ease;
+}
+
+/* Khung ảnh cố định chiều cao */
+.related-thumb {
+  width: 100%;
+  height: 180px;        /* chỉnh cao/thấp hơn thì đổi số này */
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+/* Ảnh fill đầy khung, crop đều */
+.related-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Tiêu đề */
+.related-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+  min-height: 40px;     /* để các dòng tiêu đề trông đều nhau */
+  transition: color 0.25s ease;
+}
+
+/* Hover: ảnh phóng nhẹ + card nhô lên + tiêu đề đổi màu */
+.related-item:hover {
+  background: #f7f9ff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.related-item:hover .related-thumb img {
+  transform: scale(1.06);
+}
+
+.related-item:hover .related-title {
+  color: #005bbb;
+}
+
