@@ -1,16 +1,24 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "tourdulich";
 
-$conn = new mysqli($host, $user, $pass, $db);
+// Cấu hình kết nối: Ưu tiên lấy từ biến môi trường Railway, nếu không có thì lấy giá trị mặc định (localhost)
+$host = getenv('MYSQLHOST');
+$user = getenv('MYSQLUSER');
+$pass = getenv('MYSQLPASSWORD');
+$db   = getenv('MYSQLDATABASE');
+$port = getenv('MYSQLPORT'); // Railway thường dùng cổng khác 3306, nên cần biến này
+
+// Tạo kết nối (Thêm tham số $port vào cuối)
+$conn = new mysqli($host, $user, $pass, $db, $port);
 $conn->set_charset("utf8");
 
 if ($conn->connect_error) {
-    die("Lỗi kết nối database: " . $conn->connect_error);
+    // Nên ẩn lỗi chi tiết khi lên môi trường production để bảo mật
+    die("Kết nối thất bại. Vui lòng kiểm tra lại cấu hình."); 
+    // Hoặc để debug thì dùng dòng dưới:
+    // die("Lỗi kết nối database: " . $conn->connect_error);
 }
+
 // ===== SMTP Gmail (gửi OTP email) =====
 define('SMTP_USER', 'tranhoaiphuc1810@gmail.com');        // gmail gửi OTP
 define('SMTP_APP_PASS', 'onsp ivht kizu yayf');   // App Password 16 ký tự (không phải mật khẩu gmail thường)
