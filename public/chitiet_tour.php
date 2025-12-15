@@ -86,7 +86,7 @@ $sqlImg = "
   SELECT DuongDan, LaAnhChinh
   FROM HinhAnhTour
   WHERE MaTour = $id
-  ORDER BY LaAnhChinh DESC, MaHinh ASC
+  ORDER BY LaAnhChinh DESC, MaAnh ASC
 ";
 $imgsRes = $conn->query($sqlImg);
 
