@@ -73,7 +73,7 @@ if ($q !== '') {
 }
 
 // ===== Total =====
-$sqlCount = "SELECT COUNT(*) AS c FROM dondattour d JOIN Tour t ON t.MaTour = d.MaTour WHERE $where";
+$sqlCount = "SELECT COUNT(*) AS c FROM dondattour d JOIN tour t ON t.MaTour = d.MaTour WHERE $where";
 $stmt = $conn->prepare($sqlCount);
 if ($types !== "") $stmt->bind_param($types, ...$params);
 $stmt->execute();
