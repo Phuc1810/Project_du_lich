@@ -69,12 +69,12 @@ $stmt->close();
 // 4. Recent Lists
 // Đơn đặt tour
 $recentDon = [];
-$rs = $conn->query("SELECT d.MaDon, d.NgayDat, d.TrangThai, d.TongTienPhaiTra, t.TenTour FROM dondattour d JOIN Tour t ON t.MaTour = d.MaTour ORDER BY d.MaDon DESC LIMIT 6");
+$rs = $conn->query("SELECT d.MaDon, d.NgayDat, d.TrangThai, d.TongTienPhaiTra, t.TenTour FROM dondattour d JOIN tour t ON t.MaTour = d.MaTour ORDER BY d.MaDon DESC LIMIT 6");
 if ($rs) while ($r = $rs->fetch_assoc()) $recentDon[] = $r;
 
 // Yêu cầu Doanh nghiệp
 $recentYC = [];
-$rs = $conn->query("SELECT y.MaYC, y.NgayThanhToan, y.ThoiGianKhoiHanh, y.TrangThai, y.SoNguoi, t.TenTour FROM yeucaudoanhnghiep y LEFT JOIN Tour t ON t.MaTour = y.MaTour ORDER BY y.MaYC DESC LIMIT 6");
+$rs = $conn->query("SELECT y.MaYC, y.NgayThanhToan, y.ThoiGianKhoiHanh, y.TrangThai, y.SoNguoi, t.TenTour FROM yeucaudoanhnghiep y LEFT JOIN tour t ON t.MaTour = y.MaTour ORDER BY y.MaYC DESC LIMIT 6");
 if ($rs) while ($r = $rs->fetch_assoc()) $recentYC[] = $r;
 
 ?>
