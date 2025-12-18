@@ -217,12 +217,13 @@
     <div class="row g-4">
 
     <?php
-      $sql = "SELECT t.MaTour, t.TenTour, t.GiaGoc, t.GiaGiam, h.DuongDan
-              FROM tour t
-              JOIN hinhanhtour h ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1 
-              WHERE t.PhanTramGiam >= 20 AND t.TrangThai = 'Hoạt động'
-              GROUP BY t.MaTour
-              LIMIT 9";
+     // Dùng MAX(h.DuongDan) hoặc ANY_VALUE(h.DuongDan)
+    $sql = "SELECT t.MaTour, t.TenTour, t.GiaGoc, t.GiaGiam, MAX(h.DuongDan) as DuongDan
+        FROM tour t
+        JOIN hinhanhtour h ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1 
+        WHERE t.PhanTramGiam >= 20 AND t.TrangThai = 'Hoạt động'
+        GROUP BY t.MaTour
+        LIMIT 9";
 
       $km = $conn->query($sql);
 
