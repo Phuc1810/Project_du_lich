@@ -17,8 +17,10 @@ function http_get_json(string $url): ?array {
     curl_setopt_array($ch, [
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_TIMEOUT => 10,
-      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_SSL_VERIFYPEER => false,
+      CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4, 
     ]);
+    
     $resp = curl_exec($ch);
     curl_close($ch);
     if ($resp === false) return null;
