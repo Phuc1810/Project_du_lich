@@ -26,20 +26,37 @@ function send_otp_email($toEmail, $otp){
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = SMTP_HOST; 
+        
+        // --- THAY ĐỔI QUAN TRỌNG ---
+        // 1. Ép chuyển domain sang địa chỉ IP (IPv4) để tránh bị treo
+        $mail->Host = gethostbyname(SMTP_HOST); 
+        
+        // 2. Nếu gethostbyname trả về chính nó (lỗi) thì dùng lại host gốc
+        if ($mail->Host == SMTP_HOST) {
+             $mail->Host = 'smtp-relay.brevo.com'; 
+        }
+        // ---------------------------
+
         $mail->SMTPAuth = true;
-        
-        // Dùng tài khoản Brevo để đăng nhập
-        $mail->Username = SMTP_AUTH_USER; 
+        $mail->Username = SMTP_AUTH_USER;
         $mail->Password = SMTP_AUTH_PASS;
-        
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = SMTP_PORT;
+        
+        $mail->Port = SMTP_PORT; // Lúc này nó sẽ lấy giá trị 2525 từ config
+        
         $mail->CharSet = 'UTF-8';
         $mail->Timeout = 10; 
 
-        // Quan trọng: Người gửi phải là email thật của bạn, không phải user đăng nhập
-        $mail->setFrom(SMTP_FROM_EMAIL, 'tranhoaiphuc1810@gmail.com'); 
+        // Tùy chọn bỏ qua check SSL để code chạy mượt hơn trên Cloud
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+        $mail->setFrom(SMTP_FROM_EMAIL, 'tranhoaiphuc1810@gmail.com');
         $mail->addAddress($toEmail);
         
         $mail->isHTML(true);
@@ -48,7 +65,9 @@ function send_otp_email($toEmail, $otp){
         
         $mail->send();
         return true;
+
     } catch (Exception $e) {
+        // Ghi log lỗi cụ thể nếu vẫn tạch
         error_log("MAILER ERROR: " . $mail->ErrorInfo);
         throw new Exception("Lỗi gửi mail: " . $mail->ErrorInfo);
     }
