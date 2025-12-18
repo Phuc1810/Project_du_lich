@@ -11,7 +11,7 @@ $port = getenv('MYSQLPORT') ?: 3306; // Railway thường dùng cổng khác 330
 
 // Tạo kết nối (Thêm tham số $port vào cuối)
 $conn = new mysqli($host, $user, $pass, $db, $port);
-$conn->set_charset(""utf8mb4"");
+$conn->set_charset(""utf8"");
 
 if ($conn->connect_error) {
     // Nên ẩn lỗi chi tiết khi lên môi trường production để bảo mật
@@ -24,7 +24,6 @@ if ($conn->connect_error) {
 $conn->set_charset("utf8mb4");
 try {
     $conn->query("SET time_zone = '+07:00'");
-    $conn->query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
 } catch (Exception $e) {
     // Bỏ qua lỗi timezone nếu server không hỗ trợ hoặc không có quyền
 }
