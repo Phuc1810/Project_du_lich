@@ -1,18 +1,29 @@
 <?php
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 if (session_status() === PHP_SESSION_NONE) session_start();
-$host = "mysql.railway.internal";
-$user = "root";
-$pass = "xNLGILXGsytqAFzmNSZJPGCqtgtsQwjs";
-$db   = "railway";
-$port = "3306";
 
-$conn = new mysqli($host, $user, $pass, $db,$port);
-$conn->set_charset("utf8mb4");
-$conn->query("SET time_zone = '+07:00'");
+// Cấu hình kết nối
+// Nếu có biến môi trường (trên Railway) thì dùng, nếu không thì dùng giá trị mặc định (Local)
+$host = getenv('MYSQLHOST') ? getenv('MYSQLHOST') : 'monorail.proxy.rlwy.net'; // Ví dụ Public URL
+$user = getenv('MYSQLUSER') ? getenv('MYSQLUSER') : 'root';
+$pass = getenv('MYSQLPASSWORD') ? getenv('MYSQLPASSWORD') : 'Mật_khẩu_của_bạn';
+$db   = getenv('MYSQLDATABASE') ? getenv('MYSQLDATABASE') : 'railway';
+$port = getenv('MYSQLPORT') ? getenv('MYSQLPORT') : 12345; // Port Public thường là 5 số
 
+// Tạo kết nối
+$conn = new mysqli($host, $user, $pass, $db, $port);
+
+// Kiểm tra lỗi
 if ($conn->connect_error) {
     die("Lỗi kết nối database: " . $conn->connect_error);
+}
+
+// Cấu hình charset và timezone
+$conn->set_charset("utf8mb4");
+try {
+    $conn->query("SET time_zone = '+07:00'");
+} catch (Exception $e) {
+    // Bỏ qua lỗi timezone nếu server không hỗ trợ hoặc không có quyền
 }
 // ===== SMTP Gmail (gửi OTP email) =====
 define('SMTP_USER', 'tranhoaiphuc1810@gmail.com');        // gmail gửi OTP
