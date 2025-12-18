@@ -31,11 +31,11 @@ $sql = "
     h.DuongDan AS AnhChinh,
 
     c.TenKM
-  FROM DonDatTour d
-  JOIN KhachHang kh ON kh.MaKH = d.MaKH
-  JOIN Tour t ON t.MaTour = d.MaTour
-  LEFT JOIN HinhAnhTour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
-  LEFT JOIN ChuongTrinhKhuyenMai c ON c.MaCTKM = d.MaCTKM
+  FROM dondattour d
+  JOIN khachhang kh ON kh.MaKH = d.MaKH
+  JOIN tour t ON t.MaTour = d.MaTour
+  LEFT JOIN hinhanhtour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
+  LEFT JOIN chuongtrinhkhuyenmai c ON c.MaCTKM = d.MaCTKM
   WHERE d.MaDon=? AND kh.MaTK=?
   LIMIT 1
 ";
@@ -63,7 +63,7 @@ $tourFullNow = ($soCho > 0 && $soChoDaDat >= $soCho);
 $payments = [];
 $stmt = $conn->prepare("
   SELECT MaTT, NgayTT, SoTien, PhuongThuc, TrangThaiTT
-  FROM ThanhToan
+  FROM thanhToan
   WHERE MaDon=?
   ORDER BY MaTT DESC
 ");

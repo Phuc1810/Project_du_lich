@@ -5,7 +5,7 @@ $key = isset($_GET['key']) ? trim($_GET['key']) : "";
 $key = mb_strtolower($key, 'UTF-8');
 
 $sql = "SELECT DISTINCT DiaDiem 
-        FROM Tour
+        FROM tour
         WHERE TrangThai = 'Hoạt động'";
 
 if ($key !== "") {

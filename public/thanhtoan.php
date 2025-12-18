@@ -31,10 +31,10 @@ $sql = "
          t.TenTour, t.DiaDiem, t.NgayKhoiHanh, t.GiaGoc, t.GiaGiam, t.PhanTramGiam,
          t.SoCho, t.SoChoDaDat,
          h.DuongDan AS AnhChinh
-  FROM DonDatTour d
-  JOIN KhachHang kh ON kh.MaKH = d.MaKH
-  JOIN Tour t ON t.MaTour = d.MaTour
-  LEFT JOIN HinhAnhTour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
+  FROM dondattour d
+  JOIN khachhang kh ON kh.MaKH = d.MaKH
+  JOIN tour t ON t.MaTour = d.MaTour
+  LEFT JOIN hinhanhtour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
   WHERE d.MaDon=? AND kh.MaTK=?
   LIMIT 1
 ";
@@ -67,8 +67,8 @@ $ctkm_id_valid = null;
 // CTKM tốt nhất cho tour (đang hoạt động + trong thời gian)
 $sqlKM = "
   SELECT tk.MaCTKM, tk.PhanTramGiamKM, c.TenKM
-  FROM Tour_KhuyenMai tk
-  JOIN ChuongTrinhKhuyenMai c ON c.MaCTKM = tk.MaCTKM
+  FROM tour_khuyenmai tk
+  JOIN chuongtrinhkhuyenmai c ON c.MaCTKM = tk.MaCTKM
   WHERE tk.MaTour=?
     AND c.TrangThai='Hoạt động'
     AND c.NgayBatDau <= CURDATE()
@@ -150,31 +150,42 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Thanh toán đơn #<?= (int)$madon ?></title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/chung.css">
 
     <style>
         :root {
-            --bg: #f6f8fb;
+            --bg: #f3f6f9;
+            /* Màu nền sáng nhẹ hơn */
             --card: #ffffff;
-            --text: #0f172a;
+            --text: #1e293b;
             --muted: #64748b;
-            --line: rgba(15, 23, 42, .08);
-            --shadow: 0 14px 42px rgba(16, 24, 40, .10);
-            --r: 22px;
+            --primary: #4f46e5;
+            --line: #e2e8f0;
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+            --r: 24px;
+            /* Khai báo Font chữ chính */
+            --font-main: 'Be Vietnam Pro', sans-serif;
         }
 
         body {
             background: var(--bg);
             color: var(--text);
+            font-family: var(--font-main);
+            /* Áp dụng font */
+            -webkit-font-smoothing: antialiased;
+            /* Làm mượt chữ trên Mac/iOS */
         }
 
         /* ✅ CÁCH HEADER RÕ RÀNG */
         .page {
             padding-top: 165px;
-            /* tăng khoảng cách so với header */
-            padding-bottom: 40px;
+            padding-bottom: 60px;
         }
 
         @media (max-width: 992px) {
@@ -184,86 +195,92 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
         }
 
         .shell {
-            max-width: 1120px;
+            max-width: 1080px;
         }
 
         .cardx {
             background: var(--card);
-            border: 1px solid rgba(15, 23, 42, .06);
+            border: 1px solid #eef2f6;
             border-radius: var(--r);
             box-shadow: var(--shadow);
             overflow: hidden;
+            transition: transform 0.2s ease;
         }
 
+        /* Hero section đẹp hơn */
         .hero {
-            padding: 18px 20px;
-            background:
-                radial-gradient(900px 380px at 0% 0%, rgba(99, 102, 241, .18), transparent 60%),
-                radial-gradient(900px 380px at 100% 0%, rgba(14, 165, 233, .12), transparent 55%),
-                linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, 1));
+            padding: 24px 28px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+            border: 1px solid #e0e7ff;
         }
 
         .thumb {
-            width: 104px;
-            height: 78px;
+            width: 110px;
+            height: 82px;
             border-radius: 16px;
             object-fit: cover;
             background: #e5e7eb;
-            border: 1px solid rgba(15, 23, 42, .06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .title {
-            font-size: 26px;
-            font-weight: 1000;
-            line-height: 1.15;
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            color: #1e293b;
         }
 
         .meta {
             font-size: 14px;
-            color: #475569;
-            font-weight: 650;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .meta i {
+            color: var(--primary);
         }
 
         .pill {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 12px;
-            border-radius: 999px;
-            background: #fff7ed;
-            border: 1px solid rgba(245, 158, 11, .25);
-            font-weight: 900;
-            color: #9a3412;
+            padding: 8px 16px;
+            border-radius: 99px;
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            font-weight: 700;
+            color: #b45309;
             font-size: 13px;
             white-space: nowrap;
         }
 
         .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
             background: #f59e0b;
-            box-shadow: 0 0 0 6px rgba(245, 158, 11, .15);
-            animation: pulse 1.2s ease-in-out infinite;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
             }
 
-            50% {
-                transform: scale(1.15);
-                opacity: .85;
+            70% {
+                box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
             }
         }
 
-        /* QR card */
+        /* QR section */
         .qrHead {
-            padding: 16px 18px 0;
+            padding: 24px 24px 0;
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
@@ -271,58 +288,74 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
         }
 
         .qrHead .h1 {
-            font-weight: 950;
-            font-size: 16px;
+            font-weight: 800;
+            font-size: 18px;
             margin: 0;
+            color: #0f172a;
         }
 
         .qrHead .sub {
-            margin: 4px 0 0;
+            margin: 6px 0 0;
             color: var(--muted);
             font-size: 13px;
+            line-height: 1.5;
         }
 
         .code {
-            font-weight: 1000;
-            color: #111827;
-            padding: 2px 8px;
-            border-radius: 999px;
-            background: #eef2ff;
-            border: 1px solid rgba(55, 48, 163, .12);
+            font-weight: 700;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 8px;
+            background: #e0e7ff;
+            font-size: 14px;
+            font-family: monospace;
+            /* Font code cho dễ nhìn số */
+        }
+
+        /* Hiển thị tiền trên đầu QR */
+        .badge-money {
+            background: #ecfdf5;
+            color: #059669;
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-weight: 800;
+            font-size: 14px;
+            border: 1px solid #d1fae5;
         }
 
         .qrBody {
-            padding: 18px;
+            padding: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .qrImg {
-            width: min(420px, 92%);
+            width: 100%;
+            max-width: 380px;
             height: auto;
-            border-radius: 18px;
+            border-radius: 16px;
             background: #fff;
-            box-shadow: 0 12px 30px rgba(16, 24, 40, .10);
-            border: 1px solid rgba(15, 23, 42, .06);
+            padding: 8px;
+            border: 1px solid #f1f5f9;
         }
 
         .qrFoot {
-            padding: 0 18px 18px;
+            padding: 0 24px 24px;
             text-align: center;
             color: var(--muted);
-            font-size: 13px;
+            font-size: 14px;
         }
 
-        /* Summary card */
+        /* Summary section */
         .sumBody {
-            padding: 18px 20px;
+            padding: 24px;
         }
 
         .divider {
             height: 1px;
             background: var(--line);
-            margin: 14px 0;
+            margin: 18px 0;
         }
 
         .rowline {
@@ -331,24 +364,34 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
             justify-content: space-between;
             gap: 12px;
             font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .rowline:last-child {
+            margin-bottom: 0;
         }
 
         .label {
-            color: #475569;
-            font-weight: 750;
+            color: #64748b;
+            font-weight: 600;
         }
 
         .val {
-            font-weight: 1000;
+            font-weight: 700;
+            color: #334155;
+            text-align: right;
         }
 
         .money {
-            font-weight: 1000;
+            font-weight: 800;
             font-size: 16px;
+            color: #334155;
+            font-feature-settings: "tnum";
+            /* Số thẳng hàng */
         }
 
         .neg {
-            color: #b42318;
+            color: #dc2626;
         }
 
         .totalBox {
@@ -356,57 +399,71 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
             align-items: flex-end;
             justify-content: space-between;
             gap: 12px;
-            padding: 16px 16px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, .16), rgba(14, 165, 233, .10), rgba(255, 255, 255, 1));
-            border: 1px solid rgba(99, 102, 241, .22);
+            padding: 20px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+            margin-top: 10px;
         }
 
         .totalLabel {
-            font-weight: 1000;
-            font-size: 17px;
+            font-weight: 600;
+            font-size: 16px;
+            opacity: 0.9;
         }
 
         .total {
-            font-size: 35px;
-            font-weight: 1200;
-            letter-spacing: .3px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
             line-height: 1;
-            text-shadow: 0 6px 18px rgba(2, 6, 23, .12);
         }
 
         .vnd {
-            font-size: 12px;
-            color: #334155;
-            font-weight: 900;
-            margin-top: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.8;
+            margin-top: 4px;
         }
 
         .note {
-            margin-top: 14px;
-            border-radius: 16px;
+            margin-top: 20px;
+            border-radius: 12px;
             background: #fffbeb;
-            border: 1px solid rgba(245, 158, 11, .28);
-            padding: 14px 14px;
+            border: 1px solid #fef3c7;
+            padding: 16px;
+            color: #92400e;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
         .note b {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             margin-bottom: 4px;
+            font-size: 14px;
         }
 
-        /* nicer spacing on mobile */
+        .note b::before {
+            content: '\f071';
+            /* Icon warning */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+
         @media (max-width: 992px) {
             .title {
-                font-size: 22px;
+                font-size: 20px;
             }
 
             .total {
-                font-size: 34px;
+                font-size: 28px;
             }
 
             .thumb {
-                width: 92px;
+                width: 90px;
                 height: 70px;
             }
         }
@@ -418,7 +475,6 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
 
     <div class="container page shell">
 
-        <!-- HERO / HEADER TOUR -->
         <div class="cardx hero mb-4">
             <div class="d-flex gap-3 align-items-center">
                 <?php if (!empty($don['AnhChinh'])): ?>
@@ -430,35 +486,31 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
                 <div class="flex-grow-1">
                     <div class="d-flex flex-wrap align-items-center gap-2">
                         <div class="title"><?= h($don['TenTour']) ?></div>
-                        <span class="code">Đơn #<?= (int)$madon ?></span>
                     </div>
-                    <div class="meta mt-1">
-                        <i class="fa-solid fa-location-dot me-1"></i><?= h($don['DiaDiem']) ?>
+                    <div class="meta mt-2">
+                        <i class="fa-solid fa-receipt me-1"></i>Đơn hàng: <span class="text-dark fw-bold">#<?= (int)$madon ?></span>
                         &nbsp; • &nbsp;
                         <i class="fa-regular fa-calendar-days me-1"></i>
                         <?= !empty($don['NgayKhoiHanh']) ? date('d/m/Y', strtotime($don['NgayKhoiHanh'])) : 'Đang cập nhật' ?>
-                        &nbsp; • &nbsp;
-                        <span class="text-muted">Code thanh toán:</span> <span class="fw-bold"><?= h($addInfo) ?></span>
                     </div>
                 </div>
 
-                <span class="pill">
+                <span class="pill d-none d-md-inline-flex">
                     <span class="dot"></span>
-                    Đang chờ giao dịch
+                    Đang chờ thanh toán
                 </span>
             </div>
         </div>
 
         <div class="row g-4">
-            <!-- QR -->
             <div class="col-lg-6">
-                <div class="cardx">
+                <div class="cardx h-100">
                     <div class="qrHead">
                         <div>
-                            <p class="h1">Quét QR để thanh toán</p>
-                            <p class="sub">Nội dung chuyển khoản tự điền: <span class="fw-bold"><?= h($addInfo) ?></span></p>
+                            <p class="h1">Quét mã VietQR</p>
+                            <p class="sub">Nội dung CK: <span class="code"><?= h($addInfo) ?></span></p>
                         </div>
-                        <span class="code"><?= number_format($tong_phai_tra, 0, ',', '.') ?> VNĐ</span>
+                        <span class="badge-money"><?= number_format($tong_phai_tra, 0, ',', '.') ?>đ</span>
                     </div>
 
                     <div class="qrBody">
@@ -466,55 +518,93 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
                     </div>
 
                     <div class="qrFoot">
-                        Hệ thống sẽ tự nhận tiền và tự chuyển sang trang thành công.
-                        <span id="liveStatus" class="fw-bold"></span>
+                        <div>Sử dụng App Ngân hàng hoặc Ví điện tử để quét.</div>
+                        <div class="mt-2" id="liveStatus" class="fw-bold text-primary">
+                            <i class="fa-solid fa-spinner fa-spin me-1"></i> Đang chờ nhận tiền...
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SUMMARY -->
             <div class="col-lg-6">
-                <div class="cardx">
+                <div class="cardx h-100">
                     <div class="sumBody">
                         <div class="rowline">
-                            <div class="label">Số lượng</div>
-                            <div class="val">
-                                Người lớn: <?= (int)$don['SoLuongNguoiLon'] ?> • Trẻ em: <?= (int)$don['SoLuongTreEm'] ?> • Trẻ nhỏ: <?= (int)$don['SoLuongTreNho'] ?>
-                            </div>
+                            <div class="label">Khách hàng</div>
+                            <div class="val text-truncate" style="max-width: 200px;"><?= isset($_SESSION['user']['HoTen']) ? h($_SESSION['user']['HoTen']) : 'Khách' ?></div>
+                        </div>
+                        <div class="rowline">
+                            <?php if ($don['SoLuongNguoiLon'] > 0): ?>
+                                <div class="rowline mb-2">
+                                    <div class="label text-dark">
+                                        <i class="fa-solid fa-user me-2" style="color:#64748b; width:16px;"></i>Người lớn
+                                    </div>
+                                    <div class="val">
+                                        <?= (int)$don['SoLuongNguoiLon'] ?> <span style="font-weight:400; color:#64748b;">vé</span>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($don['SoLuongTreEm'] > 0): ?>
+                                <div class="rowline mb-2">
+                                    <div class="label text-dark">
+                                        <i class="fa-solid fa-child me-2" style="color:#64748b; width:16px;"></i>Trẻ em
+                                    </div>
+                                    <div class="val">
+                                        <?= (int)$don['SoLuongTreEm'] ?> <span style="font-weight:400; color:#64748b;">vé</span>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($don['SoLuongTreNho'] > 0): ?>
+                                <div class="rowline mb-2">
+                                    <div class="label text-dark">
+                                        <i class="fa-solid fa-baby me-2" style="color:#64748b; width:16px;"></i>Trẻ nhỏ
+                                    </div>
+                                    <div class="val">
+                                        <?= (int)$don['SoLuongTreNho'] ?> <span style="font-weight:400; color:#64748b;">vé</span>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="divider"></div>
                         </div>
 
                         <div class="divider"></div>
 
                         <div class="rowline">
-                            <div class="label">Tổng tiền gốc (chưa KM)</div>
-                            <div class="money"><?= number_format($tong_goc, 0, ',', '.') ?> VNĐ</div>
+                            <div class="label">Tổng tiền gốc</div>
+                            <div class="money"><?= number_format($tong_goc, 0, ',', '.') ?> <small>đ</small></div>
                         </div>
 
                         <?php if ($pt_ap_dung > 0): ?>
-                            <div class="rowline mt-2">
-                                <div class="label">Giảm <?= (int)round($pt_ap_dung) ?>% (<?= h($loai_giam) ?>)</div>
-                                <div class="money neg">-<?= number_format(round($tong_goc - $tong_phai_tra), 0, ',', '.') ?> VNĐ</div>
+                            <div class="rowline mt-3">
+                                <div class="label text-success">
+                                    <i class="fa-solid fa-tag me-1"></i>
+                                    Ưu đãi (Giảm <?= (int)round($pt_ap_dung) ?>%)
+                                </div>
+                                <div class="money neg">-<?= number_format(round($tong_goc - $tong_phai_tra), 0, ',', '.') ?> <small>đ</small></div>
                             </div>
                             <?php if ($loai_giam === 'CTKM' && $ten_giam !== ''): ?>
-                                <div class="mt-2" style="font-size:13px;color:#64748b;">
-                                    CTKM áp dụng: <span class="fw-bold"><?= h($ten_giam) ?></span>
+                                <div class="text-end mt-1" style="font-size:12px;color:#64748b;">
+                                    <?= h($ten_giam) ?>
                                 </div>
                             <?php endif; ?>
                         <?php endif; ?>
 
-                        <div class="divider"></div>
-
-                        <div class="totalBox">
-                            <div class="totalLabel">Tổng phải trả</div>
-                            <div class="text-end">
-                                <div class="total"><?= number_format($tong_phai_tra, 0, ',', '.') ?></div>
-                                <div class="vnd">VNĐ</div>
+                        <div class="mt-4">
+                            <div class="totalBox">
+                                <div class="totalLabel">Thanh toán</div>
+                                <div class="text-end">
+                                    <div class="total"><?= number_format($tong_phai_tra, 0, ',', '.') ?></div>
+                                    <div class="vnd">VND</div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="note">
-                            <b>Lưu ý</b>
-                            Vui lòng chuyển khoản đúng số tiền. Hệ thống tự cập nhật trạng thái và chỗ trống sau khi nhận tiền.
+                            <b>Lưu ý quan trọng</b>
+                            Hệ thống sẽ tự động kích hoạt vé sau khi nhận được chuyển khoản (thường mất 10-30 giây). Vui lòng không tắt trình duyệt.
                         </div>
                     </div>
                 </div>
@@ -529,22 +619,33 @@ if (mb_strtolower(trim((string)$don['TrangThai']), 'UTF-8') === mb_strtolower('H
 
         async function ping() {
             try {
+                // SỬA DÒNG NÀY: Bỏ dấu / ở đầu để gọi đúng đường dẫn
                 const res = await fetch("api/check_payment.php?madon=" + madon, {
                     cache: "no-store"
                 });
+
+                if (!res.ok) throw new Error("API Error");
+
                 const data = await res.json();
 
                 if (data?.status === 'paid') {
-                    document.getElementById('liveStatus').textContent = " (đã nhận tiền ✓)";
-                    window.location.href = "dattour_thanhcong.php?madon=" + madon;
+                    const statusEl = document.getElementById('liveStatus');
+                    statusEl.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i> Đã nhận tiền thành công!';
+                    statusEl.className = "mt-2 fw-bold text-success fs-5";
+
+                    setTimeout(() => {
+                        window.location.href = "dattour_thanhcong.php?madon=" + madon;
+                    }, 1500);
                     return;
                 }
                 if (data?.status === 'soldout') {
-                    document.getElementById('liveStatus').textContent = " (hết chỗ)";
+                    document.getElementById('liveStatus').textContent = "Đã hết chỗ!";
                     window.location.href = "dattour_thanhcong.php?madon=" + madon;
                     return;
                 }
-            } catch (e) {}
+            } catch (e) {
+                // Silent error
+            }
 
             setTimeout(ping, 2000);
         }

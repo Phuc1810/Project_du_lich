@@ -27,8 +27,8 @@
 
   <?php
     $sql = "SELECT t.MaTour, t.TenTour, t.GiaGiam, h.DuongDan
-            FROM Tour t 
-            JOIN HinhAnhTour h ON t.MaTour = h.MaTour
+            FROM tour t 
+            JOIN hinhanhtour h ON t.MaTour = h.MaTour
             WHERE h.LoaiAnh = 'banner'
             ORDER BY h.MaAnh ASC
             LIMIT 4";
@@ -77,7 +77,7 @@
 ======================================================== -->
 <?php
   // LẤY DANH SÁCH ĐỊA ĐIỂM KHÁC NHAU
-  $sql_dd = "SELECT DISTINCT DiaDiem FROM Tour WHERE TrangThai = 'Hoạt động' ORDER BY DiaDiem";
+  $sql_dd = "SELECT DISTINCT DiaDiem FROM tour WHERE TrangThai = 'Hoạt động' ORDER BY DiaDiem";
   $dsDiaDiem = $conn->query($sql_dd);
 ?>
 
@@ -158,8 +158,8 @@
 
       <?php
         $sql = "SELECT t.MaTour, t.TenTour, t.GiaGiam, h.DuongDan
-                FROM Tour t
-                JOIN HinhAnhTour h ON t.MaTour = h.MaTour 
+                FROM tour t
+                JOIN hinhanhtour h ON t.MaTour = h.MaTour 
                 WHERE h.LoaiAnh = 'noibat'
                 ORDER BY t.MaTour ASC
                 LIMIT 8";
@@ -218,8 +218,8 @@
 
     <?php
       $sql = "SELECT t.MaTour, t.TenTour, t.GiaGoc, t.GiaGiam, h.DuongDan
-              FROM Tour t
-              JOIN HinhAnhTour h ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1 
+              FROM tour t
+              JOIN hinhanhtour h ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1 
               WHERE t.PhanTramGiam >= 20 AND t.TrangThai = 'Hoạt động'
               GROUP BY t.MaTour
               LIMIT 9";
@@ -261,8 +261,8 @@
     <div class="row g-4 mb-4">
 
       <?php
-        $hero1 = $conn->query("SELECT AnhDaiDien FROM TinTuc WHERE LoaiTin='tintuc' AND TrangThai='Hiển thị' ORDER BY NgayDang DESC LIMIT 1")->fetch_assoc();
-        $hero2 = $conn->query("SELECT AnhDaiDien FROM TinTuc WHERE LoaiTin='kinhnghiem' AND TrangThai='Hiển thị' ORDER BY NgayDang DESC LIMIT 1")->fetch_assoc();
+        $hero1 = $conn->query("SELECT AnhDaiDien FROM tintuc WHERE LoaiTin='tintuc' AND TrangThai='Hiển thị' ORDER BY NgayDang DESC LIMIT 1")->fetch_assoc();
+        $hero2 = $conn->query("SELECT AnhDaiDien FROM tintuc WHERE LoaiTin='kinhnghiem' AND TrangThai='Hiển thị' ORDER BY NgayDang DESC LIMIT 1")->fetch_assoc();
       ?>
 
       <div class="col-md-6">
@@ -348,85 +348,7 @@
 <!-- =======================================================
                         FOOTER 
 ======================================================== -->
-<footer id="footer-site" class="footer-section bg-white pt-5 pb-3 border-top">
-  <div class="container">
-
-    <?php  
-      // LẤY THÔNG TIN CÔNG TY
-      $sql_cty = "SELECT * FROM CongTy LIMIT 1";
-      $cty = $conn->query($sql_cty)->fetch_assoc();
-
-      // LẤY DANH SÁCH CHI NHÁNH
-      $sql_cn = "SELECT * FROM ChiNhanh WHERE MaCTY = " . $cty['MaCTY'];
-      $chinhanh = $conn->query($sql_cn);
-    ?>
-
-    <div class="row g-4">
-
-      <!-- ==== CỘT 1: LOGO + TÊN CTY + ICON ==== -->
-      <div class="col-lg-3 col-md-6 text-center">
-
-        <img src="assets/<?= $cty['Logo_2'] ?>" alt="Logo" class="footer-logo">
-
-        <h6 class="footer-company-name">
-          <?= $cty['TenCongTy'] ?>
-        </h6>
-
-        <div class="social-icons">
-          <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="mailto:<?= $cty['Email'] ?>" class="social-btn"><i class="fa-solid fa-envelope"></i></a>
-          <a href="#" class="social-btn"><i class="fa-solid fa-location-dot"></i></a>
-        </div>
-
-      </div>
-
-      <!-- ==== CỘT 2: THÔNG TIN LIÊN HỆ ==== -->
-      <div class="col-lg-4 col-md-6">
-        <h5 class="footer-title">THÔNG TIN LIÊN HỆ</h5>
-
-        <ul class="list-unstyled footer-contact">
-          <li><strong>Địa chỉ :</strong> <?= $cty['DiaChi'] ?></li>
-          <li><strong>Điện thoại :</strong> <?= $cty['SoDienThoai'] ?></li>
-          <li><strong>Email :</strong> <?= $cty['Email'] ?></li>
-        </ul>
-
-        <h6 class="fw-bold mt-3">Chi nhánh:</h6>
-        <ul class="list-unstyled">
-          <?php while ($cn = $chinhanh->fetch_assoc()): ?>
-            <li>
-              <i class="fa-solid fa-location-dot"></i>
-              <strong><?= $cn['TenChiNhanh'] ?>:</strong> <?= $cn['DiaChi'] ?> — <?= $cn['SDT'] ?>
-            </li>
-          <?php endwhile; ?>
-        </ul>
-      </div>
-
-      <!-- ==== CỘT 3: GIỚI THIỆU ==== -->
-      <div class="col-lg-2 col-md-6">
-        <h5 class="footer-title">GIỚI THIỆU</h5>
-        <ul class="list-unstyled footer-links">
-          <li><a href="#"><i class="fa-solid fa-angle-right"></i> Hướng dẫn thanh toán</a></li>
-          <li><a href="#"><i class="fa-solid fa-angle-right"></i> Hướng dẫn đặt tour</a></li>
-          <li><a href="./banggia.php"><i class="fa-solid fa-angle-right"></i> Bảng giá</a></li>
-          <li><a href="./khuyenmai.php"><i class="fa-solid fa-angle-right"></i> Chương trình khuyến mãi</a></li>
-        </ul>
-      </div>
-
-      <!-- ==== CỘT 4: CHÍNH SÁCH ==== -->
-      <div class="col-lg-3 col-md-6">
-        <h5 class="footer-title">CHÍNH SÁCH</h5>
-        <ul class="list-unstyled footer-links">
-          <li><a href="#"><i class="fa-solid fa-angle-right"></i> Điều khoản chung</a></li>
-        </ul>
-
-        <div class="mt-3">
-          <img src="./img/bo-cong-thuong.png" alt="Bộ công thương" width="180">
-        </div>
-      </div>
-
-    </div>
-  </div>
-</footer>
+<?php require_once __DIR__ . "/../app/includes/footer.php"; ?>
 
 
 

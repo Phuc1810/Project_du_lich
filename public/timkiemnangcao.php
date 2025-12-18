@@ -65,8 +65,8 @@ $dia_khong_dau = boDau($dia_diem);
     $sql = "
       SELECT t.MaTour, t.TenTour, t.ThoiLuong, t.GiaGiam, t.GiaGoc, t.DiaDiem, t.NgayKhoiHanh,
              h.DuongDan, t.PhanTramGiam
-      FROM Tour t
-      LEFT JOIN HinhAnhTour h 
+      FROM tour t
+      LEFT JOIN hinhanhtour h 
              ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1
       WHERE t.TrangThai = 'Hoạt động'
     ";

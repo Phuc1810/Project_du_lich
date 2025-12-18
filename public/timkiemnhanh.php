@@ -70,8 +70,8 @@ require_once __DIR__ . "/../app/includes/social-bar.php";
 $sql = "
     SELECT t.MaTour, t.TenTour, t.GiaGiam, t.GiaGoc, t.DiaDiem,
            h.DuongDan, t.PhanTramGiam
-    FROM Tour t
-    LEFT JOIN HinhAnhTour h 
+    FROM tour t
+    LEFT JOIN hinhanhtour h 
            ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1
     WHERE t.TrangThai = 'Hoạt động'
       AND CONVERT(t.DiaDiem USING utf8mb4) COLLATE utf8mb4_0900_ai_ci 

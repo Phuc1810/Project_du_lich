@@ -65,6 +65,13 @@ if (!$user) {
   exit;
 }
 
+if (($user['VaiTro'] ?? '') !== 'KH') {
+    $errors['login_key'] = "Tài khoản này là Nhân viên/Admin, vui lòng đăng nhập tại trang quản trị.";
+    flash_set('login', $errors, $old);
+    header("Location: auth.php?tab=login&err=1&redirect=" . urlencode($redirect));
+    exit;
+}
+
 if (!empty($user['TrangThai']) && $user['TrangThai'] !== 'Hoạt động') {
   $errors['login_key'] = "Tài khoản đang bị khóa hoặc không hoạt động.";
   flash_set('login', $errors, $old);

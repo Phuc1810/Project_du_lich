@@ -12,7 +12,7 @@ if ($id <= 0) {
 $sql_ct = "
     SELECT MaCTKM, TenKM, NoiDung, AnhDaiDien,
            PhanTramGiam, NgayBatDau, NgayKetThuc, TrangThai
-    FROM ChuongTrinhKhuyenMai
+    FROM chuongtrinhkhuyenmai
     WHERE MaCTKM = $id
     LIMIT 1
 ";

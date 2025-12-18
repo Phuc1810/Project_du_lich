@@ -69,8 +69,8 @@ try {
   $stmt = $conn->prepare("
     SELECT tk.MaTK, tk.VaiTro, tk.TrangThai, tk.Provider,
            kh.HoTen, kh.Email, kh.SoDienThoai
-    FROM TaiKhoan tk
-    LEFT JOIN KhachHang kh ON kh.MaTK = tk.MaTK
+    FROM taikhoan tk
+    LEFT JOIN khachhang kh ON kh.MaTK = tk.MaTK
     WHERE tk.GoogleSub = ?
     LIMIT 1
   ");
@@ -84,8 +84,8 @@ try {
     $stmt = $conn->prepare("
       SELECT tk.MaTK, tk.VaiTro, tk.TrangThai, tk.Provider,
              kh.HoTen, kh.Email, kh.SoDienThoai
-      FROM KhachHang kh
-      JOIN TaiKhoan tk ON tk.MaTK = kh.MaTK
+      FROM khachhang kh
+      JOIN taikhoan tk ON tk.MaTK = kh.MaTK
       WHERE kh.Email = ?
       LIMIT 1
     ");
@@ -131,7 +131,7 @@ try {
   $provider = 'google';
 
   $stmt = $conn->prepare("
-    INSERT INTO TaiKhoan (TenDangNhap, MatKhau, VaiTro, TrangThai, Provider, GoogleSub)
+    INSERT INTO taikhoan (TenDangNhap, MatKhau, VaiTro, TrangThai, Provider, GoogleSub)
     VALUES (?, ?, ?, ?, ?, ?)
   ");
   $stmt->bind_param("ssssss", $tenDangNhap, $hash, $vaiTro, $trangThai, $provider, $sub);
@@ -140,7 +140,7 @@ try {
   $stmt->close();
 
   $sdt = null;
-  $stmt = $conn->prepare("INSERT INTO KhachHang (HoTen, Email, SoDienThoai, MaTK) VALUES (?, ?, ?, ?)");
+  $stmt = $conn->prepare("INSERT INTO khachhang (HoTen, Email, SoDienThoai, MaTK) VALUES (?, ?, ?, ?)");
   $stmt->bind_param("sssi", $hoten, $email, $sdt, $maTK);
   $stmt->execute();
   $stmt->close();

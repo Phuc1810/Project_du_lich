@@ -135,7 +135,7 @@ try {
   $hash = password_hash($pass, PASSWORD_BCRYPT);
 
   // TaiKhoan
-  $sqlTK = "INSERT INTO TaiKhoan (TenDangNhap, MatKhau, VaiTro, TrangThai, Provider, GoogleSub)
+  $sqlTK = "INSERT INTO taikhoan (TenDangNhap, MatKhau, VaiTro, TrangThai, Provider, GoogleSub)
             VALUES (?, ?, 'KH', 'Hoạt động', 'local', NULL)";
   $stmt = $conn->prepare($sqlTK);
   $stmt->bind_param("ss", $loginKey, $hash);
@@ -144,7 +144,7 @@ try {
   $stmt->close();
 
   // KhachHang (Email hoặc SĐT có thể NULL)
-  $sqlKH = "INSERT INTO KhachHang (HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh, MaTK)
+  $sqlKH = "INSERT INTO khachhang (HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh, MaTK)
             VALUES (?, ?, ?, ?, ?, ?, ?)";
   $stmt = $conn->prepare($sqlKH);
   $stmt->bind_param("ssssssi", $hoten, $email, $sdt, $diachi, $ngaysinh, $gioitinh, $maTK);

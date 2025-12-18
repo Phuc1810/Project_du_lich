@@ -21,7 +21,7 @@ $success = false;
 /**
  * Lấy KhachHang theo MaTK, nếu chưa có thì tạo tối thiểu
  */
-$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM KhachHang WHERE MaTK=? LIMIT 1");
+$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? LIMIT 1");
 $stmt->bind_param("i", $matk);
 $stmt->execute();
 $kh = $stmt->get_result()->fetch_assoc();
@@ -33,12 +33,12 @@ if (!$kh) {
   $sdt   = (string)($_SESSION['user']['SoDienThoai'] ?? '');
   $diachi = '';
 
-  $stmt = $conn->prepare("INSERT INTO KhachHang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
+  $stmt = $conn->prepare("INSERT INTO khachhang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
   $stmt->bind_param("ssssi", $hoten, $email, $sdt, $diachi, $matk);
   $stmt->execute();
   $stmt->close();
 
-  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM KhachHang WHERE MaTK=? LIMIT 1");
+  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? LIMIT 1");
   $stmt->bind_param("i", $matk);
   $stmt->execute();
   $kh = $stmt->get_result()->fetch_assoc();
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (empty($errors)) {
     try {
       $sqlUp = "
-        UPDATE KhachHang
+        UPDATE khachhang
         SET
           HoTen       = NULLIF(?, ''),
           Email       = NULLIF(?, ''),
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt->close();
 
       // reload để hiển thị đúng dữ liệu mới
-      $stmt = $conn->prepare("SELECT HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM KhachHang WHERE MaKH=? LIMIT 1");
+      $stmt = $conn->prepare("SELECT HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaKH=? LIMIT 1");
       $stmt->bind_param("i", $makh);
       $stmt->execute();
       $kh = $stmt->get_result()->fetch_assoc();

@@ -29,8 +29,8 @@ if ($matk <= 0) {
 $sqlTour = "
   SELECT t.MaTour, t.TenTour, t.DiaDiem, t.NgayKhoiHanh, t.GiaGoc, t.GiaGiam, t.ThoiLuong, t.SoCho, t.TrangThai,
          h.DuongDan AS AnhChinh
-  FROM Tour t
-  LEFT JOIN HinhAnhTour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
+  FROM tour t
+  LEFT JOIN hinhanhtour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
   WHERE t.MaTour=? AND t.TrangThai='Hoạt động'
   LIMIT 1
 ";
@@ -45,7 +45,7 @@ if (!$tour) { header("Location: trangchu.php"); exit; }
 /* =========================
    LOAD / ENSURE KHACHHANG
 ========================= */
-$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM KhachHang WHERE MaTK=? LIMIT 1");
+$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? LIMIT 1");
 $stmt->bind_param("i", $matk);
 $stmt->execute();
 $kh = $stmt->get_result()->fetch_assoc();
@@ -57,12 +57,12 @@ if (!$kh) {
   $sdt   = $_SESSION['user']['SoDienThoai'] ?? '';
   $diachi = '';
 
-  $stmt = $conn->prepare("INSERT INTO KhachHang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
+  $stmt = $conn->prepare("INSERT INTO khachhang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
   $stmt->bind_param("ssssi", $hoten, $email, $sdt, $diachi, $matk);
   $stmt->execute();
   $stmt->close();
 
-  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM KhachHang WHERE MaTK=? LIMIT 1");
+  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? LIMIT 1");
   $stmt->bind_param("i", $matk);
   $stmt->execute();
   $kh = $stmt->get_result()->fetch_assoc();
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
       // UPDATE KhachHang (không NULLIF vì bạn không cho trống)
       $sqlUp = "
-        UPDATE KhachHang
+        UPDATE khachhang
         SET HoTen=?,
             Email=?,
             SoDienThoai=?,
@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $maCtkmToSave = ($ctkm_id > 0) ? (int)$ctkm_id : 0;
 
       $sqlIns = "
-        INSERT INTO DonDatTour
+        INSERT INTO dondattour
           (NgayDat, SoLuongNguoiLon, SoLuongTreEm, SoLuongTreNho,
            GiaNguoiLonApDung, GiaTreEmApDung,
            TongTienGoc, TongTienPhaiTra, TrangThai, MaKH, MaTour, MaCTKM)

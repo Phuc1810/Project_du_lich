@@ -50,9 +50,9 @@ require_once __DIR__ . "/../app/config/config.php";
           <?php
           $sql = "
             SELECT MaTour, TenTour, DiaDiem, ThoiLuong, GiaGoc, GiaGiam
-            FROM Tour
-            WHERE TrangThai = 'Hoạt động'
-            ORDER BY DiaDiem ASC, TenTour ASC
+            FROM tour
+            WHERE TrangThai = 'Hoạt động' and LoaiTour = 'Cá Nhân'
+            
           ";
 
           $res = $conn->query($sql);

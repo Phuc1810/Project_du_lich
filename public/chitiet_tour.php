@@ -19,8 +19,8 @@ $ctkm_id = isset($_GET['ctkm']) ? (int)$_GET['ctkm'] : 0;
 $sqlTour = "
   SELECT  t.*,
           h.DuongDan AS AnhChinh
-  FROM Tour t
-  LEFT JOIN HinhAnhTour h 
+  FROM tour t
+  LEFT JOIN hinhanhtour h 
          ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1
   WHERE t.MaTour = $id
     AND t.TrangThai = 'Hoạt động'
@@ -44,8 +44,8 @@ $ten_km = "";
 if ($ctkm_id > 0) {
   $sqlKM = "
     SELECT tk.PhanTramGiamKM, c.TenKM
-    FROM Tour_KhuyenMai tk
-    JOIN ChuongTrinhKhuyenMai c ON c.MaCTKM = tk.MaCTKM
+    FROM tour_khuyenMai tk
+    JOIN chuongtrinhkhuyenmai c ON c.MaCTKM = tk.MaCTKM
     WHERE tk.MaTour = $id
       AND tk.MaCTKM = $ctkm_id
       AND c.TrangThai = 'Hoạt động'
@@ -84,16 +84,16 @@ if ($km_ap_dung) {
 // LẤY DANH SÁCH ẢNH (GALLERY)
 $sqlImg = "
   SELECT DuongDan, LaAnhChinh
-  FROM HinhAnhTour
+  FROM hinhanhtour
   WHERE MaTour = $id
-  ORDER BY LaAnhChinh DESC, MaAnh ASC
+  ORDER BY LaAnhChinh DESC, MaHinh ASC
 ";
 $imgsRes = $conn->query($sqlImg);
 
 // LẤY LỊCH TRÌNH TOUR
 $sqlLT = "
   SELECT NgayThu, TieuDe, NoiDung
-  FROM LichTrinhTour
+  FROM lichtrinhtour
   WHERE MaTour = $id
   ORDER BY NgayThu ASC
 ";

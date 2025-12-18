@@ -15,9 +15,9 @@ if ($matk <= 0) { header("Location: trangchu.php"); exit; }
 
 $sql = "
   SELECT d.*, t.TenTour, t.DiaDiem, t.NgayKhoiHanh, t.SoCho, t.SoChoDaDat, t.TrangThai AS TrangThaiTour
-  FROM DonDatTour d
-  JOIN KhachHang kh ON kh.MaKH=d.MaKH
-  JOIN Tour t ON t.MaTour=d.MaTour
+  FROM dondattour d
+  JOIN khachhang kh ON kh.MaKH=d.MaKH
+  JOIN tour t ON t.MaTour=d.MaTour
   WHERE d.MaDon=? AND kh.MaTK=?
   LIMIT 1
 ";

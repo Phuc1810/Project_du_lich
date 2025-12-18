@@ -15,9 +15,53 @@ if ($matk <= 0) {
   exit;
 }
 
+/**
+ * ✅ AUTO CẬP NHẬT TRẠNG THÁI ĐƠN THEO NGÀY (chỉ cho đơn của user này)
+ * - Nếu đã thanh toán và hôm nay trong [NgayKhoiHanh, NgayKetThuc] => Đang diễn ra
+ * - Nếu đã thanh toán hoặc đang diễn ra và hôm nay > NgayKetThuc => Đã hoàn tất
+ */
+try {
+  // 1) Đang diễn ra
+  $sqlRun = "
+    UPDATE dondattour d
+    JOIN khachhang kh ON kh.MaKH = d.MaKH
+    JOIN tour t ON t.MaTour = d.MaTour
+    SET d.TrangThai = 'Đang diễn ra'
+    WHERE kh.MaTK = ?
+      AND d.TrangThai = 'Đã thanh toán'
+      AND t.NgayKhoiHanh IS NOT NULL
+      AND t.NgayKetThuc IS NOT NULL
+      AND CURDATE() >= t.NgayKhoiHanh
+      AND CURDATE() <= t.NgayKetThuc
+  ";
+  $stmt = $conn->prepare($sqlRun);
+  $stmt->bind_param("i", $matk);
+  $stmt->execute();
+  $stmt->close();
+
+  // 2) Đã hoàn tất
+  $sqlDone = "
+    UPDATE dondattour d
+    JOIN khachhang kh ON kh.MaKH = d.MaKH
+    JOIN tour t ON t.MaTour = d.MaTour
+    SET d.TrangThai = 'Đã hoàn tất'
+    WHERE kh.MaTK = ?
+      AND d.TrangThai IN ('Đã thanh toán', 'Đang diễn ra')
+      AND t.NgayKetThuc IS NOT NULL
+      AND CURDATE() > t.NgayKetThuc
+  ";
+  $stmt = $conn->prepare($sqlDone);
+  $stmt->bind_param("i", $matk);
+  $stmt->execute();
+  $stmt->close();
+
+} catch (Throwable $e) {
+  // nếu lỗi thì bỏ qua để trang vẫn chạy
+}
+
 // filter
-$filter = trim($_GET['st'] ?? ''); // '', 'Chờ thanh toán', 'Đã thanh toán', 'Hết chỗ'
-$validFilters = ['', 'Chờ thanh toán', 'Đã thanh toán', 'Hết chỗ'];
+$filter = trim($_GET['st'] ?? ''); // '', 'Chờ thanh toán', 'Đã thanh toán', 'Đang diễn ra', 'Đã hoàn tất'
+$validFilters = ['', 'Chờ thanh toán', 'Đã thanh toán', 'Đang diễn ra', 'Đã hoàn tất'];
 if (!in_array($filter, $validFilters, true)) $filter = '';
 
 // paging
@@ -28,8 +72,8 @@ $offset = ($page - 1) * $perPage;
 // đếm tổng
 $sqlCount = "
   SELECT COUNT(*) AS total
-  FROM DonDatTour d
-  JOIN KhachHang kh ON kh.MaKH = d.MaKH
+  FROM dondattour d
+  JOIN khachhang kh ON kh.MaKH = d.MaKH
   WHERE kh.MaTK=?
 " . ($filter !== '' ? " AND d.TrangThai=?" : "");
 
@@ -51,12 +95,12 @@ $sql = "
     d.MaDon, d.NgayDat, d.TrangThai,
     d.SoLuongNguoiLon, d.SoLuongTreEm, d.SoLuongTreNho,
     d.TongTienPhaiTra,
-    t.MaTour, t.TenTour, t.DiaDiem, t.NgayKhoiHanh,
+    t.MaTour, t.TenTour, t.DiaDiem, t.NgayKhoiHanh, t.NgayKetThuc,
     h.DuongDan AS AnhChinh
-  FROM DonDatTour d
-  JOIN KhachHang kh ON kh.MaKH = d.MaKH
-  JOIN Tour t ON t.MaTour = d.MaTour
-  LEFT JOIN HinhAnhTour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
+  FROM dondattour d
+  JOIN khachhang kh ON kh.MaKH = d.MaKH
+  JOIN tour t ON t.MaTour = d.MaTour
+  LEFT JOIN hinhanhtour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
   WHERE kh.MaTK=?
 " . ($filter !== '' ? " AND d.TrangThai=?" : "") . "
   ORDER BY d.MaDon DESC
@@ -80,8 +124,9 @@ function badgeClass($st){
   $st = mb_strtolower(trim((string)$st), 'UTF-8');
   if ($st === mb_strtolower('Đã thanh toán','UTF-8')) return 'text-bg-success';
   if ($st === mb_strtolower('Chờ thanh toán','UTF-8')) return 'text-bg-warning';
-  if ($st === mb_strtolower('Hết chỗ','UTF-8')) return 'text-bg-danger';
-  return 'text-bg-secondary';
+  if ($st === mb_strtolower('Đang diễn ra','UTF-8')) return 'text-bg-primary';
+  if ($st === mb_strtolower('Đã hoàn tất','UTF-8')) return 'text-bg-secondary';
+  return 'text-bg-light';
 }
 
 function fmtDate($d){
@@ -176,7 +221,8 @@ function fmtDate($d){
           <option value="" <?= $filter===''?'selected':''; ?>>Tất cả</option>
           <option value="Chờ thanh toán" <?= $filter==='Chờ thanh toán'?'selected':''; ?>>Chờ thanh toán</option>
           <option value="Đã thanh toán" <?= $filter==='Đã thanh toán'?'selected':''; ?>>Đã thanh toán</option>
-          <option value="Hết chỗ" <?= $filter==='Hết chỗ'?'selected':''; ?>>Hết chỗ</option>
+          <option value="Đang diễn ra" <?= $filter==='Đang diễn ra'?'selected':''; ?>>Đang diễn ra</option>
+          <option value="Đã hoàn tất" <?= $filter==='Đã hoàn tất'?'selected':''; ?>>Đã hoàn tất</option>
         </select>
       </div>
       <div class="col-md-2">
@@ -222,6 +268,7 @@ function fmtDate($d){
               <div class="meta mt-1">
                 <span><i class="fa-solid fa-location-dot me-1"></i><?= h($o['DiaDiem'] ?? '—') ?></span>
                 <span><i class="fa-regular fa-calendar-days me-1"></i>Khởi hành: <?= fmtDate($o['NgayKhoiHanh'] ?? '') ?></span>
+                <span><i class="fa-regular fa-calendar-check me-1"></i>Kết thúc: <?= fmtDate($o['NgayKetThuc'] ?? '') ?></span>
                 <span><i class="fa-regular fa-clock me-1"></i>Ngày đặt: <?= fmtDate($o['NgayDat'] ?? '') ?></span>
                 <span><i class="fa-solid fa-users me-1"></i>Số lượng: <?= (int)$qty ?></span>
               </div>

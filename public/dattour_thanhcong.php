@@ -19,10 +19,10 @@ $sql = "
          d.MaTour,
          t.TenTour, t.DiaDiem, t.NgayKhoiHanh, t.SoCho, t.SoChoDaDat,
          h.DuongDan AS AnhChinh
-  FROM DonDatTour d
-  JOIN KhachHang kh ON kh.MaKH = d.MaKH
-  JOIN Tour t ON t.MaTour = d.MaTour
-  LEFT JOIN HinhAnhTour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
+  FROM dondattour d
+  JOIN khachhang kh ON kh.MaKH = d.MaKH
+  JOIN tour t ON t.MaTour = d.MaTour
+  LEFT JOIN hinhanhtour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
   WHERE d.MaDon=? AND kh.MaTK=?
   LIMIT 1
 ";

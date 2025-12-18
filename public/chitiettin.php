@@ -14,7 +14,7 @@ if ($id <= 0) {
 // LẤY THÔNG TIN BÀI VIẾT
 $sql = "
     SELECT MaTin, TieuDe, MoTa, AnhDaiDien, NgayDang, LoaiTin, NoiDung
-    FROM TinTuc
+    FROM tintuc
     WHERE MaTin = ".$id." AND TrangThai = 'Hiển thị'
     LIMIT 1
 ";
@@ -103,7 +103,7 @@ if ($loai === 'kinhnghiem') {
     <?php
       $sql_lienquan = "
         SELECT MaTin, TieuDe, AnhDaiDien
-        FROM TinTuc
+        FROM tintuc
         WHERE TrangThai='Hiển thị'
           AND LoaiTin='".$conn->real_escape_string($loai)."'
           AND MaTin <> ".$id."

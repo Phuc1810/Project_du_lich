@@ -22,7 +22,7 @@ if ($matk <= 0) {
 
 // filter trạng thái (nếu bạn muốn thêm trạng thái khác thì bổ sung vào đây)
 $filter = trim($_GET['st'] ?? '');
-$validFilters = ['', 'Chờ xử lý', 'Đang xử lý', 'Đã duyệt', 'Từ chối', 'Hoàn tất'];
+$validFilters = ['', 'Chờ xử lý', 'Đã liên hệ', 'Hủy tour', 'Hoàn thành'];
 if (!in_array($filter, $validFilters, true)) $filter = '';
 
 // paging
@@ -34,7 +34,7 @@ $offset = ($page - 1) * $perPage;
 $sqlCount = "
   SELECT COUNT(*) AS total
   FROM yeucaudoanhnghiep y
-  JOIN KhachHang kh ON kh.MaKH = y.MaKH
+  JOIN khachhang kh ON kh.MaKH = y.MaKH
   WHERE kh.MaTK=?
 " . ($filter !== '' ? " AND y.TrangThai=?" : "");
 
@@ -56,9 +56,9 @@ $sql = "
     t.TenTour, t.DiaDiem, t.ThoiLuong,
     h.DuongDan AS AnhChinh
   FROM yeucaudoanhnghiep y
-  JOIN KhachHang kh ON kh.MaKH = y.MaKH
-  LEFT JOIN Tour t ON t.MaTour = y.MaTour
-  LEFT JOIN HinhAnhTour h ON h.MaTour = t.MaTour AND h.LaAnhChinh = 1
+  JOIN khachhang kh ON kh.MaKH = y.MaKH
+  LEFT JOIN tour t ON t.MaTour = y.MaTour
+  LEFT JOIN hinhanhtour h ON h.MaTour = t.MaTour AND h.LaAnhChinh = 1
   WHERE kh.MaTK=?
 " . ($filter !== '' ? " AND y.TrangThai=?" : "") . "
   ORDER BY y.MaYC DESC
@@ -75,12 +75,11 @@ while ($r = $rs->fetch_assoc()) $rows[] = $r;
 $stmt->close();
 
 function badgeClassYC($st){
-  $st = mb_strtolower(trim((string)$st), 'UTF-8');
-  if ($st === mb_strtolower('Chờ xử lý','UTF-8')) return 'text-bg-warning';
-  if ($st === mb_strtolower('Đang xử lý','UTF-8')) return 'text-bg-primary';
-  if ($st === mb_strtolower('Đã duyệt','UTF-8')) return 'text-bg-success';
-  if ($st === mb_strtolower('Hoàn tất','UTF-8')) return 'text-bg-success';
-  if ($st === mb_strtolower('Từ chối','UTF-8')) return 'text-bg-danger';
+ $st = trim((string)$st); // Bỏ mb_strtolower để so sánh chính xác tên
+  if ($st === 'Chờ xử lý') return 'text-bg-warning'; // Vàng
+  if ($st === 'Đã liên hệ') return 'text-bg-info text-white'; // Xanh dương (thêm text-white cho rõ)
+  if ($st === 'Hoàn thành') return 'text-bg-success'; // Xanh lá
+  if ($st === 'Hủy tour') return 'text-bg-danger'; // Đỏ
   return 'text-bg-secondary';
 }
 ?>

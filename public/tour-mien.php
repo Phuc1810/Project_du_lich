@@ -34,8 +34,8 @@ $sql = "
     SELECT t.MaTour, t.TenTour, t.GiaGoc, t.GiaGiam,
            t.DiaDiem, t.Mien, t.PhanTramGiam,
            h.DuongDan
-    FROM Tour t
-    LEFT JOIN HinhAnhTour h
+    FROM tour t
+    LEFT JOIN hinhanhtour h
            ON t.MaTour = h.MaTour AND h.LaAnhChinh = 1
     WHERE t.TrangThai = 'Hoạt động'
 ";

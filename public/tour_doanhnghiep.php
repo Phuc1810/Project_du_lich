@@ -16,8 +16,8 @@ $sql = "
     t.GiaGiam,
     t.PhanTramGiam,
     h.DuongDan AS AnhChinh
-  FROM Tour t
-  LEFT JOIN HinhAnhTour h
+  FROM tour t
+  LEFT JOIN hinhanhtour h
     ON h.MaTour = t.MaTour AND h.LaAnhChinh = 1
   WHERE t.LoaiTour = 'Doanh nghiệp'
   ORDER BY t.MaTour DESC
@@ -59,7 +59,7 @@ function calc_discount_percent($giaGoc, $giaGiam, $phanTramGiam){
 <?php require_once __DIR__ . "/../app/includes/header.php"; ?>
 
 <div class="container wrap">
-  <h2 class="page-title">TOUR DOANH NGHIỆP</h2>
+  <h2 class="fw-bold text-center mb-4">TOUR DOANH NGHIỆP</h2>
 
   <?php if (empty($tours)): ?>
     <div class="alert alert-info">Hiện chưa có tour doanh nghiệp.</div>

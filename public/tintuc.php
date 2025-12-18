@@ -18,7 +18,7 @@ if ($loai === 'kinhnghiem') {
 // QUERY DANH SÁCH TIN
 $sql = "
     SELECT MaTin, TieuDe, MoTa, AnhDaiDien, NgayDang
-    FROM TinTuc
+    FROM tintuc
     WHERE TrangThai = 'Hiển thị'
       AND LoaiTin   = '".$conn->real_escape_string($loai_db)."'
     ORDER BY NgayDang DESC

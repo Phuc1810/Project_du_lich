@@ -31,8 +31,8 @@ $sqlTour = "
     t.MaTour, t.TenTour, t.DiaDiem, t.ThoiLuong,
     t.GiaGoc, t.GiaGiam, t.PhanTramGiam,
     h.DuongDan AS AnhChinh
-  FROM Tour t
-  LEFT JOIN HinhAnhTour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
+  FROM tour t
+  LEFT JOIN hinhanhtour h ON h.MaTour=t.MaTour AND h.LaAnhChinh=1
   WHERE t.MaTour=? AND t.LoaiTour='Doanh nghiệp'
   LIMIT 1
 ";
@@ -48,7 +48,7 @@ if (!$tour) {
 }
 
 /** 2) Lấy Khách Hàng theo MaTK (nếu chưa có thì tạo nhanh) */
-$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai FROM KhachHang WHERE MaTK=? LIMIT 1");
+$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai FROM khachhang WHERE MaTK=? LIMIT 1");
 $stmt->bind_param("i", $matk);
 $stmt->execute();
 $kh = $stmt->get_result()->fetch_assoc();
@@ -59,13 +59,13 @@ if (!$kh) {
   $email = (string)($_SESSION['user']['Email'] ?? '');
   $sdt   = (string)($_SESSION['user']['SoDienThoai'] ?? '');
 
-  $stmt = $conn->prepare("INSERT INTO KhachHang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
+  $stmt = $conn->prepare("INSERT INTO khachhang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
   $diachi = '';
   $stmt->bind_param("ssssi", $hoten, $email, $sdt, $diachi, $matk);
   $stmt->execute();
   $stmt->close();
 
-  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai FROM KhachHang WHERE MaTK=? LIMIT 1");
+  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai FROM khachhang WHERE MaTK=? LIMIT 1");
   $stmt->bind_param("i", $matk);
   $stmt->execute();
   $kh = $stmt->get_result()->fetch_assoc();
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $maTour  = (int)$old['MaTour'];
 
       // 1) Lock tour
-      $stmt = $conn->prepare("SELECT SoCho, SoChoDaDat, TrangThai FROM Tour WHERE MaTour=? FOR UPDATE");
+      $stmt = $conn->prepare("SELECT SoCho, SoChoDaDat, TrangThai FROM tour WHERE MaTour=? FOR UPDATE");
       $stmt->bind_param("i", $maTour);
       $stmt->execute();
       $tour = $stmt->get_result()->fetch_assoc();
