@@ -37,8 +37,8 @@ function send_otp_email($toEmail, $otp){
         $mail->Password = SMTP_APP_PASS;
         
         // Dùng Port 587 + STARTTLS (Chuẩn nhất cho Gmail)
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+       $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Lưu ý: SMSTPS chứ không phải STARTTLS
+       $mail->Port = 465;
         
         $mail->CharSet = 'UTF-8';
         $mail->Timeout = 15; // Giới hạn chờ 15 giây
