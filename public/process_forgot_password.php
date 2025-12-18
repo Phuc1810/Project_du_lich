@@ -126,6 +126,10 @@ $sql = "
   LIMIT 1
 ";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    // Nếu sai tên bảng, nó sẽ hiện lỗi chi tiết ra màn hình thay vì 500
+    die("Lỗi SQL Prepare (Check tên bảng): " . $conn->error);
+}
 $stmt->bind_param("sss", $contact, $contact, $contact);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -153,6 +157,9 @@ $dest = ($channel === 'email') ? ($user['user_email'] ?? '') : ($user['user_phon
 $mask = ($channel === 'email') ? mask_email($dest) : mask_phone($dest);
 
 $stmt = $conn->prepare("INSERT INTO password_reset_otp (MaTK, channel, destination, otp_hash, expires_at) VALUES (?,?,?,?,?)");
+if (!$stmt) {
+    die("Lỗi INSERT OTP: " . $conn->error);
+}
 $stmt->bind_param("issss", $user['MaTK'], $channel, $dest, $otpHash, $expiresAt);
 $stmt->execute();
 $rid = $conn->insert_id;
