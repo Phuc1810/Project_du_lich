@@ -23,47 +23,50 @@ function mask_phone($p){
 }
 
 function send_otp_email($toEmail, $otp){
-  $mail = new PHPMailer(true);
-  try {
-      // Cấu hình Server
-      $mail->isSMTP();
-      $mail->Host = 'smtp.gmail.com'; // Hoặc dùng IP: gethostbyname('smtp.gmail.com')
-      $mail->SMTPAuth = true;
-      $mail->Username = SMTP_USER;
-      $mail->Password = SMTP_APP_PASS;
-      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-      $mail->Port = 587;
-      $mail->CharSet = 'UTF-8';
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        
+        // --- SỬA LỖI TIMEOUT (QUAN TRỌNG) ---
+        // Thay vì dùng tên miền, ta đổi nó sang IP (IPv4) trước khi đưa cho PHPMailer
+        // Cách này giúp tránh việc Server cố kết nối bằng IPv6 và bị treo.
+        $mail->Host = gethostbyname('smtp.gmail.com'); 
+        
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_APP_PASS;
+        
+        // Dùng Port 587 + STARTTLS (Chuẩn nhất cho Gmail)
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        
+        $mail->CharSet = 'UTF-8';
+        $mail->Timeout = 15; // Giới hạn chờ 15 giây
+        $mail->SMTPDebug = 0; // Đặt = 0 khi chạy thật, = 2 để debug
 
-      // --- CẤU HÌNH QUAN TRỌNG ĐỂ KHÔNG BỊ TREO ---
-      $mail->Timeout = 10; // Chỉ đợi 10 giây, quá thì hủy
-      $mail->SMTPDebug = 0; // Đặt = 2 nếu muốn xem log chi tiết khi lỗi
-      
-      // Bỏ qua lỗi SSL (Fix lỗi phổ biến trên Railway)
-      $mail->SMTPOptions = array(
-          'ssl' => array(
-              'verify_peer' => false,
-              'verify_peer_name' => false,
-              'allow_self_signed' => true
-          )
-      );
-      // ---------------------------------------------
+        // Bỏ qua lỗi chứng chỉ SSL (Cần thiết trên Railway/Cloud)
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
 
-      $mail->setFrom(SMTP_USER, 'TourDuLich');
-      $mail->addAddress($toEmail);
-      $mail->isHTML(true);
-      $mail->Subject = 'Mã OTP đặt lại mật khẩu';
-      $mail->Body = "Mã OTP của bạn là: <b>$otp</b><br>Mã có hiệu lực 5 phút.";
-      
-      $mail->send();
-      return true; // Gửi thành công
+        $mail->setFrom(SMTP_USER, 'TourDuLich');
+        $mail->addAddress($toEmail);
+        $mail->isHTML(true);
+        $mail->Subject = 'Mã OTP đặt lại mật khẩu';
+        $mail->Body = "Mã OTP của bạn là: <b>$otp</b><br>Mã có hiệu lực 5 phút.";
+        
+        $mail->send();
+        return true;
 
-  } catch (Exception $e) {
-      // Ghi log lỗi để mình biết tại sao (xem trong Railway Logs)
-      error_log("MAIL ERROR: " . $mail->ErrorInfo);
-      // Ném lỗi ra ngoài để khối catch ở dưới xử lý
-      throw new Exception("Không gửi được email: " . $mail->ErrorInfo);
-  }
+    } catch (Exception $e) {
+        // Ghi log lỗi chi tiết hơn
+        error_log("MAIL ERROR: " . $mail->ErrorInfo);
+        throw new Exception("Lỗi kết nối Gmail: " . $mail->ErrorInfo);
+    }
 }
 
 function vn_to_e164($phone10){
