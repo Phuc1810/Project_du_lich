@@ -63,7 +63,7 @@ $tourFullNow = ($soCho > 0 && $soChoDaDat >= $soCho);
 $payments = [];
 $stmt = $conn->prepare("
   SELECT MaTT, NgayTT, SoTien, PhuongThuc, TrangThaiTT
-  FROM thanhToan
+  FROM thanhtoan
   WHERE MaDon=?
   ORDER BY MaTT DESC
 ");
