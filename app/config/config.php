@@ -43,6 +43,10 @@ define('VIETQR_ACCOUNT_NAME', 'TRAN HOAI PHUC');
 // define('SEPAY_WEBHOOK_TOKEN', 'chuoi_token_ban_dat_tren_sepay');
 define('SEPAY_WEBHOOK_TOKEN', '');
 require_once __DIR__ . "/../lib/helpers.php";
-define('BASE_URL', '/my_project/public');
+if (getenv('MYSQLHOST')) {
+    define('BASE_URL', 'https://projectdulich-production.up.railway.app/public/trangchu.php'); // Hoặc 'https://ten-du-an.up.railway.app'
+} else {
+    define('BASE_URL', '/my_project/public'); // Localhost
+}
 ?>
 
