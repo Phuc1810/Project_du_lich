@@ -30,8 +30,11 @@ try {
     // Bỏ qua lỗi timezone nếu server không hỗ trợ hoặc không có quyền
 }
 // ===== SMTP Gmail (gửi OTP email) =====
-define('SMTP_USER', 'tranhoaiphuc1810@gmail.com');        // gmail gửi OTP
-define('SMTP_APP_PASS', 'onsp ivht kizu yayf');   // App Password 16 ký tự (không phải mật khẩu gmail thường)
+define('SMTP_HOST', 'smtp-relay.brevo.com');
+define('SMTP_PORT', 587);
+define('SMTP_AUTH_USER', '9e5ce0001@smtp-brevo.com'); 
+define('SMTP_AUTH_PASS', 'xsmtpsib-54e60b36c75c8cbb647f45d89f9d2dea251a5a6ddde2ebe485761b1ba8cb90a8-tylk10sZosluRBrK'); 
+define('SMTP_FROM_EMAIL', 'tranhoaiphuc1810@gmail.com');
 
 // ===== Twilio SMS (gửi OTP SMS) =====
 define('INFOBIP_BASE_URL', 'https://d8l1kl.api.infobip.com');
