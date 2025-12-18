@@ -1,10 +1,10 @@
 <?php
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 if (session_status() === PHP_SESSION_NONE) session_start();
-$host = "localhost";
+$host = "mysql.railway.internal";
 $user = "root";
-$pass = "";
-$db   = "tourdulich";
+$pass = "xNLGILXGsytqAFzmNSZJPGCqtgtsQwjs";
+$db   = "railway";
 
 $conn = new mysqli($host, $user, $pass, $db);
 $conn->set_charset("utf8mb4");
