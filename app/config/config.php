@@ -30,7 +30,7 @@ try {
     // Bỏ qua lỗi timezone nếu server không hỗ trợ hoặc không có quyền
 }
 // ===== SMTP Gmail (gửi OTP email) =====
-define('BREVO_API_KEY', 'xsmtpsib-54e60b36c75c8cbb647f45d89f9d2dea251a5a6ddde2ebe485761b1ba8cb90a8-xO8SYhrEkLTqi8QP'); 
+define('BREVO_API_KEY', getenv('BREVO_KEY'));
 
 // 2. Email người gửi (Phải trùng với email đăng ký Brevo)
 define('SMTP_FROM_EMAIL', 'tranhoaiphuc1810@gmail.com');
