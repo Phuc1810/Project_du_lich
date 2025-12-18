@@ -27,27 +27,26 @@ function send_otp_email($toEmail, $otp){
     try {
         $mail->isSMTP();
         
-        // --- THAY ĐỔI QUAN TRỌNG ---
-        // 1. Ép chuyển domain sang địa chỉ IP (IPv4) để tránh bị treo
-        $mail->Host = gethostbyname(SMTP_HOST); 
-        
-        // 2. Nếu gethostbyname trả về chính nó (lỗi) thì dùng lại host gốc
-        if ($mail->Host == SMTP_HOST) {
-             $mail->Host = 'smtp-relay.brevo.com'; 
+        // Fix lỗi DNS/IPv6 bằng cách lấy IP trực tiếp
+        $hostIP = gethostbyname(SMTP_HOST);
+        if ($hostIP == SMTP_HOST) { 
+            $mail->Host = SMTP_HOST;
+        } else {
+            $mail->Host = $hostIP;
         }
-        // ---------------------------
 
         $mail->SMTPAuth = true;
         $mail->Username = SMTP_AUTH_USER;
         $mail->Password = SMTP_AUTH_PASS;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         
-        $mail->Port = SMTP_PORT; // Lúc này nó sẽ lấy giá trị 2525 từ config
+        // --- QUAN TRỌNG: Dùng Port 465 phải đi kèm dòng này ---
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // <--- SMTPS (SSL)
+        $mail->Port = 465; 
+        // -----------------------------------------------------
         
         $mail->CharSet = 'UTF-8';
-        $mail->Timeout = 10; 
+        $mail->Timeout = 15;
 
-        // Tùy chọn bỏ qua check SSL để code chạy mượt hơn trên Cloud
         $mail->SMTPOptions = array(
             'ssl' => array(
                 'verify_peer' => false,
@@ -56,9 +55,8 @@ function send_otp_email($toEmail, $otp){
             )
         );
 
-        $mail->setFrom(SMTP_FROM_EMAIL, 'tranhoaiphuc1810@gmail.com');
+        $mail->setFrom(SMTP_FROM_EMAIL, 'TourDuLich Support');
         $mail->addAddress($toEmail);
-        
         $mail->isHTML(true);
         $mail->Subject = 'Mã OTP đặt lại mật khẩu';
         $mail->Body = "Mã OTP của bạn là: <b style='font-size: 20px; color: blue;'>$otp</b>";
@@ -67,7 +65,6 @@ function send_otp_email($toEmail, $otp){
         return true;
 
     } catch (Exception $e) {
-        // Ghi log lỗi cụ thể nếu vẫn tạch
         error_log("MAILER ERROR: " . $mail->ErrorInfo);
         throw new Exception("Lỗi gửi mail: " . $mail->ErrorInfo);
     }
