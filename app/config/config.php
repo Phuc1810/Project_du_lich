@@ -30,11 +30,13 @@ try {
     // Bỏ qua lỗi timezone nếu server không hỗ trợ hoặc không có quyền
 }
 // ===== SMTP Gmail (gửi OTP email) =====
-define('SMTP_HOST', 'smtp-relay.brevo.com');
-define('SMTP_PORT', 465);
-define('SMTP_AUTH_USER', '9e5ce0001@smtp-brevo.com'); 
-define('SMTP_AUTH_PASS', 'xsmtpsib-54e60b36c75c8cbb647f45d89f9d2dea251a5a6ddde2ebe485761b1ba8cb90a8-fsbDEDTPlLG8HFTn'); 
+define('BREVO_API_KEY', 'xsmtpsib-54e60b36c75c8cbb647f45d89f9d2dea251a5a6ddde2ebe485761b1ba8cb90a8-xO8SYhrEkLTqi8QP'); 
+
+// 2. Email người gửi (Phải trùng với email đăng ký Brevo)
 define('SMTP_FROM_EMAIL', 'tranhoaiphuc1810@gmail.com');
+
+// 3. Tên hiển thị (Bạn tự đặt tên gì cũng được cho đẹp)
+define('SMTP_FROM_NAME', 'Admin Tour Du Lich');
 
 // ===== Twilio SMS (gửi OTP SMS) =====
 define('INFOBIP_BASE_URL', 'https://d8l1kl.api.infobip.com');
