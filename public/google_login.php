@@ -103,7 +103,7 @@ try {
     }
 
     // Nếu account cũ chưa có GoogleSub thì update thêm (để lần sau login chuẩn sub)
-    $stmt = $conn->prepare("UPDATE TaiKhoan SET Provider='google', GoogleSub=? WHERE MaTK=? AND (GoogleSub IS NULL OR GoogleSub='')");
+    $stmt = $conn->prepare("UPDATE taikhoan SET Provider='google', GoogleSub=? WHERE MaTK=? AND (GoogleSub IS NULL OR GoogleSub='')");
     $stmt->bind_param("si", $sub, $row['MaTK']);
     $stmt->execute();
     $stmt->close();
