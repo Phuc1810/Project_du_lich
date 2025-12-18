@@ -26,46 +26,31 @@ function send_otp_email($toEmail, $otp){
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        
-        // --- SỬA LỖI TIMEOUT (QUAN TRỌNG) ---
-        // Thay vì dùng tên miền, ta đổi nó sang IP (IPv4) trước khi đưa cho PHPMailer
-        // Cách này giúp tránh việc Server cố kết nối bằng IPv6 và bị treo.
-        $mail->Host = gethostbyname('smtp.gmail.com'); 
-        
+        $mail->Host = SMTP_HOST; 
         $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USER;
-        $mail->Password = SMTP_APP_PASS;
         
-        // Dùng Port 587 + STARTTLS (Chuẩn nhất cho Gmail)
-       $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Lưu ý: SMSTPS chứ không phải STARTTLS
-       $mail->Port = 465;
+        // Dùng tài khoản Brevo để đăng nhập
+        $mail->Username = SMTP_AUTH_USER; 
+        $mail->Password = SMTP_AUTH_PASS;
         
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = SMTP_PORT;
         $mail->CharSet = 'UTF-8';
-        $mail->Timeout = 15; // Giới hạn chờ 15 giây
-        $mail->SMTPDebug = 0; // Đặt = 0 khi chạy thật, = 2 để debug
+        $mail->Timeout = 10; 
 
-        // Bỏ qua lỗi chứng chỉ SSL (Cần thiết trên Railway/Cloud)
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
-
-        $mail->setFrom(SMTP_USER, 'TourDuLich');
+        // Quan trọng: Người gửi phải là email thật của bạn, không phải user đăng nhập
+        $mail->setFrom(SMTP_FROM_EMAIL, 'tranhoaiphuc1810@gmail.com'); 
         $mail->addAddress($toEmail);
+        
         $mail->isHTML(true);
         $mail->Subject = 'Mã OTP đặt lại mật khẩu';
-        $mail->Body = "Mã OTP của bạn là: <b>$otp</b><br>Mã có hiệu lực 5 phút.";
+        $mail->Body = "Mã OTP của bạn là: <b style='font-size: 20px; color: blue;'>$otp</b>";
         
         $mail->send();
         return true;
-
     } catch (Exception $e) {
-        // Ghi log lỗi chi tiết hơn
-        error_log("MAIL ERROR: " . $mail->ErrorInfo);
-        throw new Exception("Lỗi kết nối Gmail: " . $mail->ErrorInfo);
+        error_log("MAILER ERROR: " . $mail->ErrorInfo);
+        throw new Exception("Lỗi gửi mail: " . $mail->ErrorInfo);
     }
 }
 
