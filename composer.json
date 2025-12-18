@@ -1,5 +1,7 @@
 {
     "require": {
+        "php": "^8.0",
+        "ext-mysqli": "*"
         "twilio/sdk": "^8.9",
         "phpmailer/phpmailer": "^7.0"
     }
