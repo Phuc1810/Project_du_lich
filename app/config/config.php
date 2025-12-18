@@ -1,5 +1,6 @@
 <?php
-header('Cross-Origin-Opener-Policy: same-origin-allow-popups');
+header('Cross-Origin-Opener-Policy: unsafe-none'); 
+header('Cross-Origin-Embedder-Policy: unsafe-none');
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 if (session_status() === PHP_SESSION_NONE) session_start();
 
