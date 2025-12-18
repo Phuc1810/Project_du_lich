@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ["...", "php81Extensions.mysqli"]
+
+[phases.install]
+cmds = ["composer install"]
