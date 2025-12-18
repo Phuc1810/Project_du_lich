@@ -2,20 +2,22 @@
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Cấu hình kết nối
-// Nếu có biến môi trường (trên Railway) thì dùng, nếu không thì dùng giá trị mặc định (Local)
-$host = getenv('MYSQLHOST') ? getenv('MYSQLHOST') : 'monorail.proxy.rlwy.net'; // Ví dụ Public URL
-$user = getenv('MYSQLUSER') ? getenv('MYSQLUSER') : 'root';
-$pass = getenv('MYSQLPASSWORD') ? getenv('MYSQLPASSWORD') : 'Mật_khẩu_của_bạn';
-$db   = getenv('MYSQLDATABASE') ? getenv('MYSQLDATABASE') : 'railway';
-$port = getenv('MYSQLPORT') ? getenv('MYSQLPORT') : 12345; // Port Public thường là 5 số
+// Cấu hình kết nối: Ưu tiên lấy từ biến môi trường Railway, nếu không có thì lấy giá trị mặc định (localhost)
+$host = getenv('MYSQLHOST') ?: "localhost";
+$user = getenv('MYSQLUSER') ?: "root";
+$pass = getenv('MYSQLPASSWORD') ?: "";
+$db   = getenv('MYSQLDATABASE') ?: "tourdulich";
+$port = getenv('MYSQLPORT') ?: 3306; // Railway thường dùng cổng khác 3306, nên cần biến này
 
-// Tạo kết nối
+// Tạo kết nối (Thêm tham số $port vào cuối)
 $conn = new mysqli($host, $user, $pass, $db, $port);
+$conn->set_charset("utf8");
 
-// Kiểm tra lỗi
 if ($conn->connect_error) {
-    die("Lỗi kết nối database: " . $conn->connect_error);
+    // Nên ẩn lỗi chi tiết khi lên môi trường production để bảo mật
+    die("Kết nối thất bại. Vui lòng kiểm tra lại cấu hình."); 
+    // Hoặc để debug thì dùng dòng dưới:
+    // die("Lỗi kết nối database: " . $conn->connect_error);
 }
 
 // Cấu hình charset và timezone
