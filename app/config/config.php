@@ -31,7 +31,7 @@ try {
 }
 // ===== SMTP Gmail (gửi OTP email) =====
 define('SMTP_HOST', 'smtp-relay.brevo.com');
-define('SMTP_PORT', 587);
+define('SMTP_PORT', 465);
 define('SMTP_AUTH_USER', '9e5ce0001@smtp-brevo.com'); 
 define('SMTP_AUTH_PASS', 'xsmtpsib-54e60b36c75c8cbb647f45d89f9d2dea251a5a6ddde2ebe485761b1ba8cb90a8-fsbDEDTPlLG8HFTn'); 
 define('SMTP_FROM_EMAIL', 'tranhoaiphuc1810@gmail.com');
