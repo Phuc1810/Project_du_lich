@@ -297,7 +297,7 @@
 
         <?php
           $tin = $conn->query("SELECT MaTin, TieuDe, MoTa, AnhDaiDien, LoaiTin
-          FROM TinTuc 
+          FROM tintuc 
           WHERE TrangThai='Hiển thị' 
           ORDER BY NgayDang DESC
           LIMIT 6")->fetch_all(MYSQLI_ASSOC);
