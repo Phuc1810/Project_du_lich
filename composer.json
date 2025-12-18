@@ -5,6 +5,7 @@
          "ext-gd": "*",
          "ext-openssl": "*",
         "twilio/sdk": "^8.9",
-        "phpmailer/phpmailer": "^7.0"
+        "phpmailer/phpmailer": "^7.0",
+        "google/apiclient": "^2.15.0"
     }
 }
