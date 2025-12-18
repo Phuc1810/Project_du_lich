@@ -1,4 +1,5 @@
 <?php
+header('Cross-Origin-Opener-Policy: same-origin-allow-popups');
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 if (session_status() === PHP_SESSION_NONE) session_start();
 
