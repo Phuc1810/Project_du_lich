@@ -115,7 +115,7 @@ if ($pt_ap_dung > 0) {
 if ((float)$don['TongTienPhaiTra'] != (float)$tong_phai_tra) {
     $newMaCTKM = ($loai_giam === 'CTKM') ? $ctkm_id_valid : null;
 
-    $stmt = $conn->prepare("UPDATE DonDatTour SET TongTienPhaiTra=?, MaCTKM=? WHERE MaDon=? LIMIT 1");
+    $stmt = $conn->prepare("UPDATE dondattour SET TongTienPhaiTra=?, MaCTKM=? WHERE MaDon=? LIMIT 1");
     $maCtkmToSave = $newMaCTKM; // có thể NULL nếu cột cho phép NULL
     $stmt->bind_param("dii", $tong_phai_tra, $maCtkmToSave, $madon);
     $stmt->execute();
