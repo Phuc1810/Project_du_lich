@@ -161,6 +161,9 @@ try {
 
 } catch (Throwable $e) {
   $conn->rollback();
-  echo json_encode(['ok'=>false,'message'=>'Lỗi server khi xử lý Google login.']);
-  exit;
+  echo json_encode([
+        'ok' => false,
+        'message' => 'Lỗi server: ' . $e->getMessage() 
+    ]);
+    exit;
 }
