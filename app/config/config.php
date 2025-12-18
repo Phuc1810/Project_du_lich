@@ -5,8 +5,9 @@ $host = "mysql.railway.internal";
 $user = "root";
 $pass = "xNLGILXGsytqAFzmNSZJPGCqtgtsQwjs";
 $db   = "railway";
+$port = "3306";
 
-$conn = new mysqli($host, $user, $pass, $db);
+$conn = new mysqli($host, $user, $pass, $db,$port);
 $conn->set_charset("utf8mb4");
 $conn->query("SET time_zone = '+07:00'");
 
