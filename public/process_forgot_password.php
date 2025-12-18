@@ -22,52 +22,62 @@ function mask_phone($p){
   return substr($p,0,2) . str_repeat('*',6) . substr($p,-2);
 }
 
-function send_otp_email($toEmail, $otp){
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        
-        // Fix lỗi DNS/IPv6 bằng cách lấy IP trực tiếp
-        $hostIP = gethostbyname(SMTP_HOST);
-        if ($hostIP == SMTP_HOST) { 
-            $mail->Host = SMTP_HOST;
-        } else {
-            $mail->Host = $hostIP;
-        }
+function send_otp_email($toEmail, $otp) {
+    // URL API của Brevo
+    $url = 'https://api.brevo.com/v3/smtp/email';
 
-        $mail->SMTPAuth = true;
-        $mail->Username = SMTP_AUTH_USER;
-        $mail->Password = SMTP_AUTH_PASS;
-        
-        // --- QUAN TRỌNG: Dùng Port 465 phải đi kèm dòng này ---
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // <--- SMTPS (SSL)
-        $mail->Port = 465; 
-        // -----------------------------------------------------
-        
-        $mail->CharSet = 'UTF-8';
-        $mail->Timeout = 15;
+    // Dữ liệu gửi đi
+    $data = [
+        "sender" => [
+            "name" => SMTP_FROM_NAME,
+            "email" => SMTP_FROM_EMAIL
+        ],
+        "to" => [
+            [
+                "email" => $toEmail
+            ]
+        ],
+        "subject" => "Mã OTP đặt lại mật khẩu",
+        "htmlContent" => "<html><body>
+                            <h3>Mã xác thực của bạn</h3>
+                            <p>Mã OTP: <b style='font-size: 24px; color: #007bff;'>$otp</b></p>
+                            <p>Mã có hiệu lực trong 5 phút.</p>
+                          </body></html>"
+    ];
 
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
+    // Cấu hình cURL để gọi API (Giống hệt gửi SMS)
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'accept: application/json',
+            'api-key: ' . BREVO_API_KEY, // Dùng Key API xkeysib
+            'content-type: application/json'
+        ],
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_TIMEOUT => 10 // Đợi tối đa 10s
+    ]);
 
-        $mail->setFrom(SMTP_FROM_EMAIL, 'TourDuLich Support');
-        $mail->addAddress($toEmail);
-        $mail->isHTML(true);
-        $mail->Subject = 'Mã OTP đặt lại mật khẩu';
-        $mail->Body = "Mã OTP của bạn là: <b style='font-size: 20px; color: blue;'>$otp</b>";
-        
-        $mail->send();
-        return true;
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
 
-    } catch (Exception $e) {
-        error_log("MAILER ERROR: " . $mail->ErrorInfo);
-        throw new Exception("Lỗi gửi mail: " . $mail->ErrorInfo);
+    // Kiểm tra lỗi
+    if ($error) {
+        throw new Exception("Lỗi kết nối API Brevo: " . $error);
     }
+
+    // HTTP Code 201 hoặc 200 là thành công
+    if ($httpCode >= 400) {
+        // Log phản hồi lỗi từ Brevo để debug
+        error_log("BREVO API ERROR: " . $response);
+        throw new Exception("Lỗi gửi mail (API): Mã lỗi $httpCode. Vui lòng thử lại sau.");
+    }
+
+    return true;
 }
 
 function vn_to_e164($phone10){
