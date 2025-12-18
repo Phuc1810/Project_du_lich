@@ -11,7 +11,7 @@ $port = getenv('MYSQLPORT') ?: 3306; // Railway thường dùng cổng khác 330
 
 // Tạo kết nối (Thêm tham số $port vào cuối)
 $conn = new mysqli($host, $user, $pass, $db, $port);
-$conn->set_charset(""utf8"");
+$conn->set_charset("utf8");
 
 if ($conn->connect_error) {
     // Nên ẩn lỗi chi tiết khi lên môi trường production để bảo mật
