@@ -191,24 +191,32 @@ $rid = $conn->insert_id;
 $stmt->close();
 
 try {
-  if ($channel === 'email') send_otp_email($dest, $otp);
-  else send_otp_sms($dest, $otp);
+    if ($channel === 'email') {
+        send_otp_email($dest, $otp);
+    } else {
+        send_otp_sms($dest, $otp);
+    }
 
-  $_SESSION['reset'] = [
-    'rid' => $rid,
-    'matk' => (int)$user['MaTK'],
-    'redirect' => $redirect,
-    'prefill' => $user['user_email'] ?? '',
-    'channel' => $channel,
-    'dest' => $dest,
-    'masked' => $mask
-  ];
+    // Nếu gửi thành công thì mới chuyển trang và set session
+    $_SESSION['reset'] = [
+        'rid' => $rid,
+        'matk' => (int)$user['MaTK'],
+        'redirect' => $redirect,
+        'prefill' => $user['user_email'] ?? '',
+        'channel' => $channel,
+        'dest' => $dest,
+        'masked' => $mask
+    ];
 
-  header("Location: verify_otp.php?id=".$rid."&m=".urlencode($mask));
-  exit;
+    header("Location: verify_otp.php?id=".$rid."&m=".urlencode($mask));
+    exit;
 
 } catch (Throwable $e) {
-  $_SESSION['flash_fp'] = ['error' => 'Gửi OTP thất bại: '.$e->getMessage()];
-  header("Location: forgot_password.php?redirect=".urlencode($redirect));
-  exit;
+    // Nếu gửi mail lỗi => Xóa OTP vừa tạo trong DB để tránh rác (Optional)
+    // $conn->query("DELETE FROM password_reset_otp WHERE id = $rid");
+
+    // Hiện lỗi ra cho người dùng biết thay vì màn hình trắng 500
+    $_SESSION['flash_fp'] = ['error' => 'Lỗi gửi OTP: ' . $e->getMessage()];
+    header("Location: forgot_password.php?redirect=".urlencode($redirect));
+    exit;
 }
