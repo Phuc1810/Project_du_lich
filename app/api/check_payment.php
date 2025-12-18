@@ -14,7 +14,7 @@ try {
     exit;
   }
 
-  $stmt = $conn->prepare("SELECT TrangThai FROM DonDatTour WHERE MaDon=? LIMIT 1");
+  $stmt = $conn->prepare("SELECT TrangThai FROM dondattour WHERE MaDon=? LIMIT 1");
   $stmt->bind_param("i", $madon);
   $stmt->execute();
   $row = $stmt->get_result()->fetch_assoc();
