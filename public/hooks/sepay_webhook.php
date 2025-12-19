@@ -306,15 +306,15 @@ try {
 
   /** ===== Gửi thông báo PAID ===== */
   SEND_NOTIFY_PAID:
-
+  
   $stmt = $conn->prepare("
     SELECT d.MaDon, d.TongTienPhaiTra, d.SoLuongNguoiLon, d.SoLuongTreEm, d.SoLuongTreNho,
            t.TenTour, t.DiaDiem, t.NgayKhoiHanh,
            kh.HoTen, kh.Email, kh.SoDienThoai,
-           tk.TenDangNhap, tk.Provider
+           tk.TenDangNhap
     FROM dondattour d
     JOIN khachhang kh ON kh.MaKH = d.MaKH
-    JOIN taikhoan tk ON tk.MaTK = kh.MaTK
+    LEFT JOIN taikhoan tk ON tk.MaTK = kh.MaTK
     JOIN tour t ON t.MaTour = d.MaTour
     WHERE d.MaDon=?
     LIMIT 1
@@ -324,81 +324,69 @@ try {
   $info = $stmt->get_result()->fetch_assoc();
   $stmt->close();
 
-//   $email = '';
-//   if (!empty($info['Email']) && filter_var($info['Email'], FILTER_VALIDATE_EMAIL)) $email = $info['Email'];
-//   if ($email === '' && !empty($info['TenDangNhap']) && filter_var($info['TenDangNhap'], FILTER_VALIDATE_EMAIL)) $email = $info['TenDangNhap'];
+  // --- LOGIC LẤY EMAIL / SĐT (Ưu tiên thông tin khách hàng) ---
+  $email = '';
+  $phone = '';
 
-//   $phone = '';
-//   if (!empty($info['SoDienThoai'])) $phone = $info['SoDienThoai'];
-//   if ($phone === '' && !empty($info['TenDangNhap']) && preg_match('/^\d{9,12}$/', $info['TenDangNhap'])) $phone = $info['TenDangNhap'];
-
-$username = trim((string)($info['TenDangNhap'] ?? ''));
-
-$isLoginEmail = ($username !== '' && filter_var($username, FILTER_VALIDATE_EMAIL));
-$isLoginPhone = ($username !== '' && preg_match('/^\d{9,12}$/', $username));
-
-$email = '';
-$phone = '';
-
-// 1) Nếu đăng nhập bằng EMAIL => gửi EMAIL (ưu tiên email đăng nhập)
-if ($isLoginEmail) {
-  $email = $username;
-  if ($email === '' && !empty($info['Email']) && filter_var($info['Email'], FILTER_VALIDATE_EMAIL)) {
-    $email = $info['Email'];
+  // 1. Ưu tiên lấy Email từ thông tin khách hàng (chính xác nhất)
+  if (!empty($info['Email']) && filter_var($info['Email'], FILTER_VALIDATE_EMAIL)) {
+      $email = $info['Email'];
   }
-}
-// 2) Nếu đăng nhập bằng SĐT => gửi SMS (ưu tiên SĐT đăng nhập)
-else if ($isLoginPhone) {
-  $phone = $username;
-  if ($phone === '' && !empty($info['SoDienThoai'])) {
-    $phone = $info['SoDienThoai'];
+  // 2. Nếu không có, thử lấy từ Tên đăng nhập (nếu là email)
+  elseif (!empty($info['TenDangNhap']) && filter_var($info['TenDangNhap'], FILTER_VALIDATE_EMAIL)) {
+      $email = $info['TenDangNhap'];
   }
-}
-// 3) Fallback: nếu không rõ kiểu đăng nhập => ưu tiên Email rồi mới SMS
-else {
-  if (!empty($info['Email']) && filter_var($info['Email'], FILTER_VALIDATE_EMAIL)) $email = $info['Email'];
-  if ($email === '' && $isLoginEmail) $email = $username;
 
-  if ($email === '') {
-    if (!empty($info['SoDienThoai'])) $phone = $info['SoDienThoai'];
-    if ($phone === '' && $isLoginPhone) $phone = $username;
+  // 3. Lấy SĐT từ thông tin khách hàng
+  if (!empty($info['SoDienThoai'])) {
+      $phone = $info['SoDienThoai'];
   }
-}
-
+  // 4. Nếu không có, thử lấy từ Tên đăng nhập (nếu là số)
+  elseif (!empty($info['TenDangNhap']) && preg_match('/^\d{9,12}$/', $info['TenDangNhap'])) {
+      $phone = $info['TenDangNhap'];
+  }
 
   $ngayKH = !empty($info['NgayKhoiHanh']) ? date('d/m/Y', strtotime($info['NgayKhoiHanh'])) : 'Đang cập nhật';
   $money = number_format((float)$info['TongTienPhaiTra'], 0, ',', '.');
 
   $subject = "Xác nhận thanh toán đơn tour #DH{$madon}";
   $html = "
-    <div style='font-family:Arial,sans-serif;line-height:1.6'>
-      <h2 style='margin:0 0 8px'>Thanh toán thành công ✅</h2>
-      <p>Xin chào <b>".htmlspecialchars($info['HoTen'] ?? '', ENT_QUOTES, 'UTF-8')."</b>,</p>
-      <p>Đơn tour <b>#DH{$madon}</b> đã được thanh toán thành công.</p>
-      <ul>
-        <li><b>Tour:</b> ".htmlspecialchars($info['TenTour'] ?? '', ENT_QUOTES, 'UTF-8')."</li>
-        <li><b>Địa điểm:</b> ".htmlspecialchars($info['DiaDiem'] ?? '', ENT_QUOTES, 'UTF-8')."</li>
-        <li><b>Khởi hành:</b> {$ngayKH}</li>
-        <li><b>Số lượng:</b> Người lớn {$info['SoLuongNguoiLon']}, Trẻ em {$info['SoLuongTreEm']}, Trẻ nhỏ {$info['SoLuongTreNho']}</li>
-        <li><b>Số tiền:</b> {$money} VNĐ</li>
-        <li><b>Trạng thái:</b> Đã thanh toán</li>
-      </ul>
-      <p>Bạn có thể xem chi tiết đơn tại website.</p>
-      <p style='color:#64748b;font-size:12px'>VietJourney Tour</p>
+    <div style='font-family:Arial,sans-serif;line-height:1.6;color:#333;'>
+      <h2 style='margin:0 0 16px;color:#0d6efd;'>Thanh toán thành công ✅</h2>
+      <p>Xin chào <b>".htmlspecialchars($info['HoTen'] ?? 'Quý khách', ENT_QUOTES, 'UTF-8')."</b>,</p>
+      <p>Hệ thống VietJourney đã nhận được thanh toán cho đơn hàng <b>#DH{$madon}</b>.</p>
+      <div style='background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0;'>
+        <ul style='list-style:none;padding:0;margin:0;'>
+          <li style='margin-bottom:8px;'>📦 <b>Tour:</b> ".htmlspecialchars($info['TenTour'] ?? '', ENT_QUOTES, 'UTF-8')."</li>
+          <li style='margin-bottom:8px;'>📍 <b>Địa điểm:</b> ".htmlspecialchars($info['DiaDiem'] ?? '', ENT_QUOTES, 'UTF-8')."</li>
+          <li style='margin-bottom:8px;'>📅 <b>Khởi hành:</b> {$ngayKH}</li>
+          <li style='margin-bottom:8px;'>👥 <b>Khách:</b> {$info['SoLuongNguoiLon']} người lớn, {$info['SoLuongTreEm']} trẻ em, {$info['SoLuongTreNho']} trẻ nhỏ</li>
+          <li style='margin-bottom:8px;'>💰 <b>Số tiền:</b> <b style='color:#dc3545;'>{$money} VNĐ</b></li>
+        </ul>
+      </div>
+      <p>Cảm ơn bạn đã tin tưởng VietJourney!</p>
+      <hr style='border:0;border-top:1px solid #eee;margin:20px 0;'>
+      <p style='color:#6c757d;font-size:12px'>Đây là email tự động, vui lòng không trả lời.</p>
     </div>
   ";
 
-  $smsText = "VietJourney: DH{$madon} thanh toan thanh cong. Tour: ".($info['TenTour'] ?? '').". Khoi hanh: {$ngayKH}. So tien: {$money} VND.";
+  $smsText = "VietJourney: DH{$madon} thanh toan thanh cong. Tour: ".($info['TenTour'] ?? '').". Khoi hanh: {$ngayKH}.";
 
   $sent = false;
+  // Gửi Email trước
   if ($email !== '') {
     $sent = send_email_smtp($email, $subject, $html);
     wlog("SEND_EMAIL to={$email} ok=".($sent?'1':'0'));
-  } elseif ($phone !== '') {
-    $sent = send_sms_infobip($phone, $smsText);
-    wlog("SEND_SMS to={$phone} ok=".($sent?'1':'0'));
-  } else {
-    wlog("NO_CONTACT madon={$madon}");
+  }
+  
+  // Nếu gửi email thất bại HOẶC không có email -> Gửi SMS
+  if (!$sent && $phone !== '') {
+    $sentSMS = send_sms_infobip($phone, $smsText);
+    wlog("SEND_SMS to={$phone} ok=".($sentSMS?'1':'0'));
+  }
+  
+  if ($email === '' && $phone === '') {
+    wlog("NO_CONTACT_INFO madon={$madon}");
   }
 
   echo json_encode(['ok'=>true,'status'=>'paid','madon'=>$madon,'amount'=>$amount]);
