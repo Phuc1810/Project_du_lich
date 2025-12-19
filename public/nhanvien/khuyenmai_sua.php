@@ -350,7 +350,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <div class="col-md-6">
                 <label class="form-label fw-bold">Ngày bắt đầu</label>
                 <input class="form-control" type="date" name="NgayBatDau" id="NgayBatDau"
-                  value="<?= h($old['NgayBatDau']) ?>" min="<?= date('Y-m-d') ?>" required>
+                  value="<?= h($old['NgayBatDau']) ?>" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-bold">Ngày kết thúc</label>
