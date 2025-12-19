@@ -93,6 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!is_numeric($old['PhanTramGiam']) || (float)$old['PhanTramGiam'] < 0 || (float)$old['PhanTramGiam'] > 100)
             $errors[] = "% giảm phải từ 0-100.";
 
+        if ($old['NgayKhoiHanh'] < date('Y-m-d')) {
+            $errors[] = "Ngày khởi hành phải từ hôm nay trở đi.";
+        }
+        
         // Ngày kết thúc phải >= Ngày khởi hành
         if ($old['NgayKetThuc'] < $old['NgayKhoiHanh']) {
             $errors[] = "Ngày kết thúc phải lớn hơn hoặc bằng ngày khởi hành.";
