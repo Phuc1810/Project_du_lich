@@ -393,7 +393,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Ngày khởi hành <span class="text-danger">*</span></label>
-                        <input class="form-control" type="date" name="NgayKhoiHanh" id="NgayKhoiHanh" value="<?= h($old['NgayKhoiHanh']) ?>" required>
+                        <input class="form-control" type="date" name="NgayKhoiHanh" id="NgayKhoiHanh" value="<?= h($old['NgayKhoiHanh']) ?>" min="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Ngày kết thúc <span class="text-danger">*</span></label>
