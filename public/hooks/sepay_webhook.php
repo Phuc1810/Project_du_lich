@@ -125,43 +125,45 @@ function send_email_brevo($to, $subject, $html) {
 
 /** ========= GỬI SMS INFOBIP ========= */
 function send_sms_infobip($toPhone, $text) {
-    try {
-        if (!defined('INFOBIP_BASE_URL') || !defined('INFOBIP_API_KEY')) return false;
-        
-        $to = normalize_phone_to_e164($toPhone);
-        if ($to === '') return false;
+  try {
+    $to = normalize_phone_to_e164($toPhone);
+    if ($to === '') return false;
 
-        $url = rtrim(INFOBIP_BASE_URL, '/') . "/sms/2/text/advanced";
-        $payload = json_encode([
-            "messages" => [[
-                "from" => defined('INFOBIP_FROM') ? INFOBIP_FROM : 'ServiceSMS',
-                "destinations" => [["to" => $to]],
-                "text" => $text
-            ]]
-        ], JSON_UNESCAPED_UNICODE);
+    $url = rtrim(INFOBIP_BASE_URL, '/') . "/sms/2/text/advanced";
+    $payload = json_encode([
+      "messages" => [[
+        "from" => INFOBIP_FROM,
+        "destinations" => [["to" => $to]],
+        "text" => $text
+      ]]
+    ], JSON_UNESCAPED_UNICODE);
 
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $payload,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: App " . INFOBIP_API_KEY,
-                "Content-Type: application/json",
-                "Accept: application/json"
-            ],
-            CURLOPT_TIMEOUT => 15
-        ]);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_POST => true,
+      CURLOPT_POSTFIELDS => $payload,
+      CURLOPT_HTTPHEADER => [
+        "Authorization: App " . INFOBIP_API_KEY,
+        "Content-Type: application/json",
+        "Accept: application/json"
+      ],
+      CURLOPT_TIMEOUT => 15
+    ]);
 
-        $res = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+    $res = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
 
-        return ($code >= 200 && $code < 300);
-    } catch (Throwable $e) {
-        wlog("SMS_ERR=" . $e->getMessage());
-        return false;
-    }
+    if ($err) wlog("SMS_CURL_ERR=".$err);
+    wlog("SMS_HTTP=".$code." RES=".$res);
+
+    return ($code >= 200 && $code < 300);
+  } catch (Throwable $e) {
+    wlog("SMS_ERR=".$e->getMessage());
+    return false;
+  }
 }
 
 /** ========= Parse Webhook ========= */
