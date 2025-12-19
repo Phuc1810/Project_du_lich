@@ -16,7 +16,7 @@ function clamp_int($v, $min=0, $max=1000000){
 $tour_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($tour_id <= 0) { header("Location: trangchu.php"); exit; }
 
-$ctkm_id = isset($_GET['ctkm']) ? (int)$_GET['ctkm'] : 0; // chỉ lưu tham chiếu (có thể 0)
+$ctkm_id = isset($_GET['ctkm']) ? (int)$_GET['ctkm'] : 0; 
 $matk = (int)($_SESSION['user']['MaTK'] ?? 0);
 if ($matk <= 0) {
   header("Location: auth.php?tab=login&redirect=" . urlencode($_SERVER['REQUEST_URI']));
@@ -24,7 +24,7 @@ if ($matk <= 0) {
 }
 
 /* =========================
-   LOAD TOUR
+   1. LOAD TOUR
 ========================= */
 $sqlTour = "
   SELECT t.MaTour, t.TenTour, t.DiaDiem, t.NgayKhoiHanh, t.GiaGoc, t.GiaGiam, t.ThoiLuong, t.SoCho, t.TrangThai,
@@ -43,57 +43,39 @@ $stmt->close();
 if (!$tour) { header("Location: trangchu.php"); exit; }
 
 /* =========================
-   LOAD / ENSURE KHACHHANG
+   2. LOAD THÔNG TIN KHÁCH TỪ TÀI KHOẢN (ĐỂ ĐIỀN SẴN FORM)
 ========================= */
-$stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? LIMIT 1");
+$stmt = $conn->prepare("SELECT HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? ORDER BY MaKH DESC LIMIT 1");
 $stmt->bind_param("i", $matk);
 $stmt->execute();
-$kh = $stmt->get_result()->fetch_assoc();
+$kh_prefill = $stmt->get_result()->fetch_assoc(); // Dữ liệu gợi ý
 $stmt->close();
 
-if (!$kh) {
-  $hoten = $_SESSION['user']['HoTen'] ?? '';
-  $email = $_SESSION['user']['Email'] ?? '';
-  $sdt   = $_SESSION['user']['SoDienThoai'] ?? '';
-  $diachi = '';
-
-  $stmt = $conn->prepare("INSERT INTO khachhang (HoTen, Email, SoDienThoai, DiaChi, MaTK) VALUES (?,?,?,?,?)");
-  $stmt->bind_param("ssssi", $hoten, $email, $sdt, $diachi, $matk);
-  $stmt->execute();
-  $stmt->close();
-
-  $stmt = $conn->prepare("SELECT MaKH, HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh FROM khachhang WHERE MaTK=? LIMIT 1");
-  $stmt->bind_param("i", $matk);
-  $stmt->execute();
-  $kh = $stmt->get_result()->fetch_assoc();
-  $stmt->close();
-}
-
-$makh = (int)($kh['MaKH'] ?? 0);
-if ($makh <= 0) die("Không lấy được MaKH.");
-
 /* =========================
-   GIÁ & RULE
+   3. GIÁ & RULE
 ========================= */
-$rateTreEm = 0.7;                      // trẻ em 70% giá gốc (bạn có thể đổi)
-$gia_goc = (float)$tour['GiaGoc'];     // tổng tiền gốc = theo giá gốc (chưa áp dụng KM)
+$rateTreEm = 0.7;                      
+$gia_goc = (float)$tour['GiaGoc'];     
 $giaNguoiLon = $gia_goc;
 $giaTreEm    = round($gia_goc * $rateTreEm);
-$giaTreNho   = 0;                      // trẻ nhỏ miễn phí
+$giaTreNho   = 0;                      
 
 $errors = [];
 $old = [
   'nguoi_lon' => 1,
   'tre_em'    => 0,
   'tre_nho'   => 0,
-  'HoTen'     => $kh['HoTen'] ?? '',
-  'Email'     => $kh['Email'] ?? '',
-  'SoDienThoai' => $kh['SoDienThoai'] ?? '',
-  'DiaChi'    => $kh['DiaChi'] ?? '',
-  'NgaySinh'  => $kh['NgaySinh'] ?? '',
-  'GioiTinh'  => $kh['GioiTinh'] ?? '',
+  'HoTen'     => $kh_prefill['HoTen'] ?? $_SESSION['user']['HoTen'] ?? '',
+  'Email'     => $kh_prefill['Email'] ?? $_SESSION['user']['Email'] ?? '',
+  'SoDienThoai' => $kh_prefill['SoDienThoai'] ?? $_SESSION['user']['SoDienThoai'] ?? '',
+  'DiaChi'    => $kh_prefill['DiaChi'] ?? '',
+  'NgaySinh'  => $kh_prefill['NgaySinh'] ?? '',
+  'GioiTinh'  => $kh_prefill['GioiTinh'] ?? '',
 ];
 
+/* =========================
+   4. XỬ LÝ POST (ĐẶT TOUR)
+========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $old['nguoi_lon'] = clamp_int($_POST['nguoi_lon'] ?? 1, 1, 1000);
   $old['tre_em']    = clamp_int($_POST['tre_em'] ?? 0, 0, 1000);
@@ -106,129 +88,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $old['NgaySinh']    = trim($_POST['NgaySinh'] ?? '');
   $old['GioiTinh']    = trim($_POST['GioiTinh'] ?? '');
 
-  // ===== VALIDATE bắt buộc tất cả thông tin =====
+  // --- VALIDATE ---
   if ($old['HoTen'] === '') $errors[] = "Vui lòng nhập Họ tên.";
+  if ($old['Email'] === '') $errors[] = "Vui lòng nhập Email.";
+  else if (!filter_var($old['Email'], FILTER_VALIDATE_EMAIL)) $errors[] = "Email không hợp lệ.";
 
-  if ($old['Email'] === '') {
-    $errors[] = "Vui lòng nhập Email.";
-  } else if (!filter_var($old['Email'], FILTER_VALIDATE_EMAIL)) {
-    $errors[] = "Email không hợp lệ.";
-  }
-
-  if ($old['SoDienThoai'] === '') {
-    $errors[] = "Vui lòng nhập Số điện thoại.";
-  } else if (!preg_match('/^0\d{9}$/', $old['SoDienThoai'])) {
-    $errors[] = "Số điện thoại phải đủ 10 số và bắt đầu bằng 0 (vd: 0xxxxxxxxx).";
-  }
+  if ($old['SoDienThoai'] === '') $errors[] = "Vui lòng nhập Số điện thoại.";
+  else if (!preg_match('/^0\d{9}$/', $old['SoDienThoai'])) $errors[] = "Số điện thoại phải đủ 10 số và bắt đầu bằng 0.";
 
   if ($old['DiaChi'] === '') $errors[] = "Vui lòng nhập Địa chỉ.";
-
-  if ($old['GioiTinh'] === '') {
-    $errors[] = "Vui lòng chọn Giới tính.";
-  } else if (!in_array($old['GioiTinh'], ['Nam','Nữ','Khác'], true)) {
-    $errors[] = "Giới tính không hợp lệ.";
-  }
+  if ($old['GioiTinh'] === '' || !in_array($old['GioiTinh'], ['Nam','Nữ','Khác'])) $errors[] = "Giới tính không hợp lệ.";
 
   if ($old['NgaySinh'] === '') {
     $errors[] = "Vui lòng chọn Ngày sinh.";
   } else {
     $dob = DateTime::createFromFormat('Y-m-d', $old['NgaySinh']);
-    $dobErrors = DateTime::getLastErrors();
-    if (!$dob || ($dobErrors['warning_count'] ?? 0) > 0 || ($dobErrors['error_count'] ?? 0) > 0) {
-      $errors[] = "Ngày sinh không hợp lệ.";
-    } else {
-      $today = new DateTime('today');
-      if ($dob >= $today) {
-        $errors[] = "Ngày sinh phải nhỏ hơn ngày hiện tại.";
-      }
-    }
+    $today = new DateTime('today');
+    if (!$dob || $dob >= $today) $errors[] = "Ngày sinh không hợp lệ (phải nhỏ hơn hôm nay).";
   }
 
-  // validate số lượng
   if ($old['nguoi_lon'] < 1) $errors[] = "Phải có ít nhất 1 người lớn.";
-
-  // ✅ Rule: trẻ nhỏ <= người lớn * 2
   $maxTreNho = $old['nguoi_lon'] * 2;
-  if ($old['tre_nho'] > $maxTreNho) {
-    $errors[] = "Trẻ nhỏ tối đa là {$maxTreNho} (mỗi 1 người lớn tối đa 2 trẻ nhỏ).";
-  }
+  if ($old['tre_nho'] > $maxTreNho) $errors[] = "Trẻ nhỏ tối đa là {$maxTreNho} (mỗi 1 người lớn tối đa 2 trẻ nhỏ).";
 
-  // tổng tiền gốc (chưa áp KM)
-  $tongTienGoc = ($old['nguoi_lon'] * $giaNguoiLon)
-               + ($old['tre_em']    * $giaTreEm)
-               + ($old['tre_nho']   * $giaTreNho);
+  // --- TÍNH TIỀN GỐC ---
+  $tongTienGoc = ($old['nguoi_lon'] * $giaNguoiLon) + ($old['tre_em'] * $giaTreEm) + ($old['tre_nho'] * $giaTreNho);
 
   if (empty($errors)) {
     $conn->begin_transaction();
     try {
-      // UPDATE KhachHang (không NULLIF vì bạn không cho trống)
-      $sqlUp = "
-        UPDATE khachhang
-        SET HoTen=?,
-            Email=?,
-            SoDienThoai=?,
-            DiaChi=?,
-            NgaySinh=?,
-            GioiTinh=?
-        WHERE MaKH=? LIMIT 1
-      ";
-      $stmt = $conn->prepare($sqlUp);
-      $stmt->bind_param(
-        "ssssssi",
-        $old['HoTen'],
-        $old['Email'],
-        $old['SoDienThoai'],
-        $old['DiaChi'],
-        $old['NgaySinh'],
-        $old['GioiTinh'],
-        $makh
-      );
-      $stmt->execute();
-      $stmt->close();
+      $finalMaKH = 0;
 
-      // INSERT DonDatTour
+      // >>> LOGIC MỚI: KIỂM TRA SĐT ĐỂ TRÁNH TRÙNG <<<
+      
+      // 1. Tìm xem SĐT này đã có trong bảng khachhang chưa?
+      $stmtCheck = $conn->prepare("SELECT MaKH FROM khachhang WHERE SoDienThoai = ? LIMIT 1");
+      $stmtCheck->bind_param("s", $old['SoDienThoai']);
+      $stmtCheck->execute();
+      $resCheck = $stmtCheck->get_result();
+      $existingCust = $resCheck->fetch_assoc();
+      $stmtCheck->close();
+
+      if ($existingCust) {
+          // A. NẾU CÓ RỒI -> Dùng lại MaKH cũ & Update thông tin mới nhất
+          $finalMaKH = $existingCust['MaKH'];
+          
+          $sqlUp = "UPDATE khachhang 
+                    SET HoTen=?, Email=?, DiaChi=?, NgaySinh=?, GioiTinh=?, MaTK=? 
+                    WHERE MaKH=?";
+          $stmtUp = $conn->prepare($sqlUp);
+          $stmtUp->bind_param("sssssii", 
+              $old['HoTen'], $old['Email'], $old['DiaChi'], $old['NgaySinh'], $old['GioiTinh'], $matk, $finalMaKH
+          );
+          $stmtUp->execute();
+          $stmtUp->close();
+
+      } else {
+          // B. NẾU CHƯA CÓ -> Tạo mới
+          $sqlIn = "INSERT INTO khachhang (HoTen, Email, SoDienThoai, DiaChi, NgaySinh, GioiTinh, MaTK) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+          $stmtIn = $conn->prepare($sqlIn);
+          $stmtIn->bind_param("ssssssi", 
+              $old['HoTen'], $old['Email'], $old['SoDienThoai'], $old['DiaChi'], $old['NgaySinh'], $old['GioiTinh'], $matk
+          );
+          if (!$stmtIn->execute()) {
+              throw new Exception("Lỗi tạo khách hàng: " . $stmtIn->error);
+          }
+          $finalMaKH = $conn->insert_id;
+          $stmtIn->close();
+      }
+
+      // 2. TẠO ĐƠN HÀNG (Dùng $finalMaKH)
       $trangthai = "Chờ thanh toán";
-      $giaNguoiLonApDung = (float)$giaNguoiLon;
-      $giaTreEmApDung    = (float)$giaTreEm;
-      $tongTienPhaiTra   = (float)$tongTienGoc; // chưa áp KM (sẽ tính lại ở thanhtoan.php)
+      $tongTienPhaiTra = (float)$tongTienGoc; 
+      $maCtkmToSave = ($ctkm_id > 0) ? (int)$ctkm_id : null;
 
-      $maCtkmToSave = ($ctkm_id > 0) ? (int)$ctkm_id : 0;
-
-      $sqlIns = "
+      $sqlInsDon = "
         INSERT INTO dondattour
           (NgayDat, SoLuongNguoiLon, SoLuongTreEm, SoLuongTreNho,
            GiaNguoiLonApDung, GiaTreEmApDung,
            TongTienGoc, TongTienPhaiTra, TrangThai, MaKH, MaTour, MaCTKM)
         VALUES
-          (CURDATE(), ?, ?, ?,
-           ?, ?,
-           ?, ?, ?, ?, ?, NULLIF(?,0))
+          (CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ";
-      $stmt = $conn->prepare($sqlIns);
-
-      // 11 placeholders -> 11 types
-      $stmt->bind_param(
+      
+      $stmtDon = $conn->prepare($sqlInsDon);
+      $stmtDon->bind_param(
         "iiiddddsiii",
-        $old['nguoi_lon'],
-        $old['tre_em'],
-        $old['tre_nho'],
-        $giaNguoiLonApDung,
-        $giaTreEmApDung,
-        $tongTienGoc,
-        $tongTienPhaiTra,
-        $trangthai,
-        $makh,
-        $tour_id,
-        $maCtkmToSave
+        $old['nguoi_lon'], $old['tre_em'], $old['tre_nho'],
+        $giaNguoiLon, $giaTreEm,
+        $tongTienGoc, $tongTienPhaiTra,
+        $trangthai, $finalMaKH, $tour_id, $maCtkmToSave
       );
 
-      $stmt->execute();
+      if (!$stmtDon->execute()) {
+          throw new Exception("Lỗi tạo đơn hàng: " . $stmtDon->error);
+      }
       $madon = $conn->insert_id;
-      $stmt->close();
+      $stmtDon->close();
 
       $conn->commit();
 
-      // cập nhật session để header chào họ tên
+      // Cập nhật session tên mới
       $_SESSION['user']['HoTen'] = $old['HoTen'];
 
       header("Location: thanhtoan.php?madon=" . (int)$madon);
@@ -236,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } catch (Throwable $e) {
       $conn->rollback();
-      $errors[] = "Lỗi lưu đơn: " . $e->getMessage();
+      $errors[] = "Hệ thống đang bận, vui lòng thử lại sau. (" . $e->getMessage() . ")";
     }
   }
 }
