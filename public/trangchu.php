@@ -30,7 +30,7 @@
             FROM tour t 
             JOIN hinhanhtour h ON t.MaTour = h.MaTour
             WHERE h.LoaiAnh = 'banner'
-            ORDER BY h.MaAnh ASC
+            ORDER BY h.MaAnh DESC
             LIMIT 4";
 
     $banner = $conn->query($sql);
@@ -161,7 +161,7 @@
                 FROM tour t
                 JOIN hinhanhtour h ON t.MaTour = h.MaTour 
                 WHERE h.LoaiAnh = 'noibat'
-                ORDER BY t.MaTour ASC
+                ORDER BY t.MaTour DESC
                 LIMIT 8";
 
         $res = $conn->query($sql);
