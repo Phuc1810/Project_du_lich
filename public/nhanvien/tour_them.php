@@ -321,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Ảnh chính (1 ảnh) <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" name="AnhChinh" accept=".jpg,.jpeg,.png,.webp" required>
-                        <div class="form-text">Ảnh sẽ tự lưu vào <b>public/assets/img/</b></div>
+                        <div class="form-text">Chọn ảnh để lưu</div>
                     </div>
 
                     <div class="col-12">
