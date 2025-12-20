@@ -38,6 +38,13 @@ if (!$tour) {
     exit;
 }
 
+// 1b. Lấy ảnh chính hiện tại (để biết LoaiAnh và hiển thị form)
+$stmtImg = $conn->prepare("SELECT DuongDan, LoaiAnh FROM hinhanhtour WHERE MaTour=? AND LaAnhChinh=1 LIMIT 1");
+$stmtImg->bind_param("i", $id);
+$stmtImg->execute();
+$currImg = $stmtImg->get_result()->fetch_assoc();
+$stmtImg->close();
+
 // 2. Lấy lịch trình hiện tại
 $stmtLT = $conn->prepare("SELECT * FROM lichtrinhtour WHERE MaTour=? ORDER BY NgayThu ASC");
 $stmtLT->bind_param("i", $id);
@@ -59,6 +66,7 @@ $old = [
     'LoaiTour'     => (string)($tour['LoaiTour'] ?? ''),
     'Mien'         => (string)($tour['Mien'] ?? ''),
     'TrangThai'    => (string)($tour['TrangThai'] ?? ''),
+    'LoaiAnh' => $currLoaiAnh,
 ];
 
 // Xử lý POST cập nhật
@@ -143,6 +151,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Vui lòng nhập ít nhất 1 dòng lịch trình chi tiết.";
     }
 
+    $validLoaiAnh = ['', 'banner', 'noibat'];
+    if (!in_array($old['LoaiAnh'], $validLoaiAnh, true)) {
+        $errors[] = "Loại ảnh không hợp lệ.";
+    }
+
     // ===== CẬP NHẬT DỮ LIỆU =====
     if (empty($errors)) {
         $conn->begin_transaction();
@@ -160,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $loai = $old['LoaiTour'];
             $mien = $old['Mien'];
             $tt   = $old['TrangThai'];
+            $loaiAnh = $old['LoaiAnh'] ?? '';
 
             $sql = "UPDATE tour 
                     SET TenTour=?, DiaDiem=?, ThoiLuong=?, GiaGoc=?, GiaGiam=?, PhanTramGiam=?, 
@@ -171,6 +185,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("sssddiisssssi", $ten, $dd, $tl, $g0, $gg, $pt, $sc, $ngayKH, $ngayKT, $loai, $mien, $tt, $id);
             $stmt->execute();
             $stmt->close();
+
+            $stmtLoai = $conn->prepare("UPDATE hinhanhtour SET LoaiAnh=? WHERE MaTour=? AND LaAnhChinh=1");
+            $stmtLoai->bind_param("si", $loaiAnh, $id);
+            $stmtLoai->execute();
+            $stmtLoai->close();
 
             // 2. Xử lý Ảnh
             if ($hasNewFile) {
@@ -201,16 +220,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Update DB ảnh
                 if ($oldImgRow) {
-                    $sqlUpImg = "UPDATE hinhanhtour SET DuongDan = ? WHERE MaTour = ? AND LaAnhChinh = 1";
+                     $sqlUpImg = "UPDATE hinhanhtour SET DuongDan=?, LoaiAnh=? WHERE MaTour=? AND LaAnhChinh=1";
                     $stmtUp = $conn->prepare($sqlUpImg);
-                    $stmtUp->bind_param("si", $dbPath, $id);
+                    $stmtUp->bind_param("ssi", $dbPath, $loaiAnh, $id);
                     $stmtUp->execute();
                     $stmtUp->close();
                 } else {
                     // Chú ý: LoaiAnh để rỗng ''
-                    $sqlInImg = "INSERT INTO hinhanhtour (DuongDan, LaAnhChinh, LoaiAnh, MaTour) VALUES (?, 1, '', ?)";
+                    $sqlInImg = "INSERT INTO hinhanhtour (DuongDan, LaAnhChinh, LoaiAnh, MaTour) VALUES (?, 1, ?, ?)";
                     $stmtIn = $conn->prepare($sqlInImg);
-                    $stmtIn->bind_param("si", $dbPath, $id);
+                    $stmtIn->bind_param("ssi", $dbPath, $loaiAnh, $id);
                     $stmtIn->execute();
                     $stmtIn->close();
                 }
@@ -370,6 +389,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="form-label fw-semibold">Ảnh chính (Chọn để thay đổi)</label>
                         <input type="file" class="form-control" name="AnhChinh" accept=".jpg,.jpeg,.png,.webp">
                         <div class="form-text">Để trống nếu giữ nguyên ảnh cũ.</div>
+
+                         <!--  THÊM dropdown LoaiAnh -->
+                         <div class="mt-2">
+                            <label class="form-label fw-semibold">Loại ảnh</label>
+                            <select class="form-select" name="LoaiAnh">
+                                <option value="" <?= $old['LoaiAnh'] === '' ? 'selected' : ''; ?>>(Rỗng / Không chọn)</option>
+                                <option value="banner" <?= $old['LoaiAnh'] === 'banner' ? 'selected' : ''; ?>>banner</option>
+                                <option value="noibat" <?= $old['LoaiAnh'] === 'noibat' ? 'selected' : ''; ?>>noibat</option>
+                            </select>
+                            <div class="form-text">Không chọn sẽ lưu rỗng.</div>
+                        </div>
                     </div>
 
                     <div class="col-12">
