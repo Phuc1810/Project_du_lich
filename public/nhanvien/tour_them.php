@@ -33,6 +33,7 @@ $old = [
     'TrangThai'    => 'Hoạt động',
     'NgayKhoiHanh' => '',
     'NgayKetThuc'  => '',
+    'LoaiAnh'      => '',
 ];
 
 $today = date('Y-m-d');
@@ -132,6 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Vui lòng nhập ít nhất 1 dòng lịch trình tour.";
     }
 
+    $validLoaiAnh = ['', 'banner', 'noibat'];
+    if (!in_array($old['LoaiAnh'], $validLoaiAnh, true)) {
+        $errors[] = "Loại ảnh không hợp lệ.";
+    }
+
     // ===== INSERT DB =====
     if (empty($errors)) {
         $conn->begin_transaction();
@@ -176,10 +182,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $dbPath = "img/" . $safeName;
+            $loaiAnh = $old['LoaiAnh'] ?? '';
 
-            $sqlImg = "INSERT INTO hinhanhtour (DuongDan, LaAnhChinh, LoaiAnh, MaTour) VALUES (?, 1, '', ?)";
+            $sqlImg = "INSERT INTO hinhanhtour (DuongDan, LaAnhChinh, LoaiAnh, MaTour) VALUES (?, 1, ?, ?)";
             $stmt = $conn->prepare($sqlImg);
-            $stmt->bind_param("si", $dbPath, $maTourNew);
+            $stmt->bind_param("sii", $dbPath, $loaiAnh, $maTourNew);
             $stmt->execute();
             $stmt->close();
 
@@ -322,6 +329,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="form-label fw-semibold">Ảnh chính (1 ảnh) <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" name="AnhChinh" accept=".jpg,.jpeg,.png,.webp" required>
                         <div class="form-text">Chọn ảnh để lưu</div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label fw-semibold">Loại ảnh</label>
+                        <select class="form-select" name="LoaiAnh">
+                            <option value="" <?= $old['LoaiAnh'] === '' ? 'selected' : ''; ?>>(Rỗng / Không chọn)</option>
+                            <option value="banner" <?= $old['LoaiAnh'] === 'banner' ? 'selected' : ''; ?>>banner</option>
+                            <option value="noibat" <?= $old['LoaiAnh'] === 'noibat' ? 'selected' : ''; ?>>noibat</option>
+                        </select>
+                        <div class="form-text">Không chọn sẽ lưu rỗng.</div>
                     </div>
 
                     <div class="col-12">
