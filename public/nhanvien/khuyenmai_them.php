@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="mt-3">
                             <label class="form-label">Ảnh đại diện (Banner)</label>
                             <input type="file" class="form-control" name="AnhDaiDien" accept=".jpg,.jpeg,.png,.webp">
-                            <div class="form-text small">Hệ thống sẽ lưu vào <b>public/assets/img/</b></div>
+                            <div class="form-text small">Chọn ảnh để lưu</div>
                         </div>
                     </div>
                 </div>
