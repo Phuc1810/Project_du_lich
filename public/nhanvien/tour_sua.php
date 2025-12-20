@@ -45,6 +45,7 @@ $stmtImg->execute();
 $currImg = $stmtImg->get_result()->fetch_assoc();
 $stmtImg->close();
 
+$currLoaiAnh = (string)($currImg['LoaiAnh'] ?? ''); 
 // 2. Lấy lịch trình hiện tại
 $stmtLT = $conn->prepare("SELECT * FROM lichtrinhtour WHERE MaTour=? ORDER BY NgayThu ASC");
 $stmtLT->bind_param("i", $id);
