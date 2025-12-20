@@ -155,7 +155,7 @@ function badgeClassYC($st){
         <label class="form-label fw-semibold mb-1">Lọc theo trạng thái</label>
         <select class="form-select" name="st">
           <option value="" <?= $filter===''?'selected':''; ?>>Tất cả</option>
-          <?php foreach (['Chờ xử lý','Đang xử lý','Đã duyệt','Từ chối','Hoàn tất'] as $st): ?>
+          <?php foreach (['Chờ xử lý','Đã liên hệ', 'Hoàn thành', 'Hủy tour'] as $st): ?>
             <option value="<?= h($st) ?>" <?= $filter===$st?'selected':''; ?>><?= h($st) ?></option>
           <?php endforeach; ?>
         </select>
