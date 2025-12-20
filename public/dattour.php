@@ -263,9 +263,15 @@ $maxTreNhoUI = $old['nguoi_lon'] * 2;
               &nbsp; • &nbsp;
               Giá gốc: <strong><?= number_format((float)$tour['GiaGoc'], 0, ',', '.') ?> VNĐ</strong>
             </div>
-            <div class="hint mt-1">
-              Trẻ em: <?= (int)round($rateTreEm*100) ?>% &nbsp;|&nbsp;
-              Trẻ nhỏ: <strong>Miễn phí</strong> (tối đa = Người lớn × 2)
+           <div class="hint mt-2">
+                <div class="mb-1">
+                  <i class="fa-solid fa-check text-primary me-1" style="font-size: 10px;"></i>
+                  Trẻ em (5-11 tuổi): <strong><?= (int)round($rateTreEm * 100) ?>%</strong> giá vé
+                </div>
+                <div>
+                  <i class="fa-solid fa-gift text-danger me-1" style="font-size: 10px;"></i>
+                  Trẻ nhỏ (2-4 tuổi): <strong class="text-success">Miễn phí</strong> <span class="text-muted">(tối đa = Người lớn × 2)</span>
+                </div>
             </div>
           </div>
         </div>
