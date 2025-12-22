@@ -135,15 +135,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt = $conn->prepare("SELECT SoCho, SoChoDaDat, TrangThai FROM tour WHERE MaTour=? FOR UPDATE");
       $stmt->bind_param("i", $maTour);
       $stmt->execute();
-      $tour = $stmt->get_result()->fetch_assoc();
+      $tourLock = $stmt->get_result()->fetch_assoc();
       $stmt->close();
 
       if (!$tour) {
         throw new Exception("Tour không tồn tại.");
       }
 
-      $soCho     = (int)$tour['SoCho'];
-      $soChoDaDat = (int)$tour['SoChoDaDat'];
+      $soCho     = (int)$tourLock['SoCho'];
+      $soChoDaDat = (int)$tourLock['SoChoDaDat'];
 
       // 2) Check đủ chỗ (nếu bạn muốn DN vẫn giới hạn chỗ)
       if ($soCho > 0 && ($soChoDaDat + $soNguoi) > $soCho) {
